@@ -1,0 +1,19 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Play\Supporter.cs">
+    <Files>
+      <File FileName="Assets\Scripts\Play\SoundMusicButtonControll.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Object\JewelObj.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Other\ButtonActionController.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Play\Supporter.cs" Line="444" Column="2" />
+      <File FileName="Assets\Scripts\Other\GameController.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\TestManager.cs" Line="23" Column="17" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Breakpoint file="E:\Mega\Unity Asset - Match 3 Jewel Full 298 Levels Unity[AKD]\Match 3 Jewel Full 298 Levels\Assets\Scripts\Play\Supporter.cs" line="529" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
