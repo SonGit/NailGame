@@ -24,6 +24,14 @@ public class JewelSpawner : MonoBehaviour
 
     public GameObject JewelColor;
 
+	public GameObject Wrapper;
+
+	public GameObject Striped_h;
+
+	public GameObject Striped_v;
+
+	public GameObject JewelWheel;
+
     public GameObject NoSelect;
 
     private const float BaseDistance = 1f;
@@ -121,7 +129,7 @@ public class JewelSpawner : MonoBehaviour
         {
             goto loop;
         }
-
+		yield return new WaitForSeconds(3f);
         EnableAllJewel();
         yield return new WaitForSeconds(0.75f);
         Timer.timer.NoSelect.SetActive(false);
@@ -316,41 +324,57 @@ public class JewelSpawner : MonoBehaviour
         int y = (int)pos.y;
         if (JewelGrib[x, y] != null)
             Destroy(JewelGrib[x, y]);
-        if (type == 8)
-        {
-            tmp = (GameObject)Instantiate(JewelColor);
-        }
-        else
-        {
-            tmp = (GameObject)Instantiate(JewelObject);
-        }
+		
+		tmp = JewelObjectMaker(power);
+		tmp.transform.SetParent(JewelParent.transform, false);
+		tmp.transform.localPosition = new Vector3(x, y, pos.z);
 
-        JewelScript = tmp.GetComponent<JewelObj>();
-        JewelScript.render.enabled = true;
-        tmp.transform.SetParent(JewelParent.transform, false);
-        tmp.transform.localPosition = new Vector3(x, y, pos.z);
-        JewelGrib[x, y] = tmp;
-        JewelGribScript[x, y] = JewelScript;
-        if (type != 8) {
+		JewelObjInitializer (ref tmp,x,y,type,power);
+
+       // tmp.GetComponent<Collider2D>().enabled = false;
+
+        if (power == (int)GameController.Power.BOOM )
+            EffectSpawner.effect.Enchant(tmp.transform.GetChild(0).gameObject);
+        return tmp;
+    }
+
+	GameObject JewelObjectMaker(int power)
+	{
+		switch(power)
+		{
+			case 5://Wrapper
+			return (GameObject)Instantiate(Wrapper);
+			case 6://STRIPED_VERTICAL
+			return (GameObject)Instantiate(Striped_v);
+			case 7://STRIPED_HORIZONTAL
+			return (GameObject)Instantiate(Striped_h);
+			case 8://Colour bomb,magic
+			return (GameObject)Instantiate(JewelColor);
+			case 9://Wheel
+			return (GameObject)Instantiate(JewelWheel);
+			default:
+			return (GameObject)Instantiate(JewelObject);
+		}
+	}
+
+	void JewelObjInitializer(ref GameObject jewelObj,int x, int y,int type,int power)
+	{
+		JewelScript = jewelObj.GetComponent<JewelObj>();
+		JewelScript.render.enabled = true;
+		JewelGrib[x, y] = jewelObj;
+		JewelGribScript[x, y] = JewelScript;
+		JewelScript.jewel.JewelPosition = new Vector2(x, y);
+		JewelScript.jewel.JewelType = type;
+		JewelScript.jewel.JewelPower = power;
+
+		if (type != 8) {
 			if(type >= JewelSprite.Length)
 				JewelScript.render.sprite = JewelSprite[type-1];
 			else
 				JewelScript.render.sprite = JewelSprite[type]; //Have no idea why, had to improvise on the old code
 		}
-        JewelScript.jewel.JewelPosition = new Vector2(x, y);
-        JewelScript.jewel.JewelType = type;
-        JewelScript.jewel.JewelPower = power;
-        tmp.GetComponent<Collider2D>().enabled = false;
 
-        if (power == (int)GameController.Power.BOOM )
-            EffectSpawner.effect.Enchant(tmp.transform.GetChild(0).gameObject);
-		//Tracer code
-		if (power == (int)GameController.Power.DESTROY_AROUND )
-			EffectSpawner.effect.Enchant(tmp.transform.GetChild(0).gameObject);
-		if (power == (int)GameController.Power.STRIPED_VERTICAL ||  power == (int)GameController.Power.STRIPED_HORIZONTAL)
-			EffectSpawner.effect.Clock2(tmp.transform.GetChild(0).gameObject);
-        return tmp;
-    }
+	}
 
     public void SpawnStar(Vector2 pos)
     {

@@ -10,6 +10,15 @@ public enum JewelShape
 	L_SHAPED,
 }
 
+public enum MotionDirection
+{
+	NONE,
+	UP,
+	DOWN,
+	LEFT,
+	RIGHT
+}
+
 public class Supporter : MonoBehaviour
 {
 
@@ -409,7 +418,7 @@ public class Supporter : MonoBehaviour
 
 					int random = Random.Range(6,8);
 
-					StartCoroutine(SpawnJewelPower(type, random, tmp.jewel.JewelPosition));
+					StartCoroutine(SpawnJewelPower_Async(type, random, tmp.jewel.JewelPosition));
 				}
 			}
 		}
@@ -475,10 +484,17 @@ public class Supporter : MonoBehaviour
 		GameController.action.dropjewel ();
 	}
 
-	IEnumerator SpawnJewelPower(int type, int power, Vector2 pos)
+	public void SpawnJewelPower(int type, int power, Vector2 pos,bool playAppearAnim = false)
 	{
-		yield return new WaitForSeconds(0.4f);
+		StartCoroutine ( SpawnJewelPower_Async(type,power,pos,playAppearAnim) );
+	}
+
+	IEnumerator SpawnJewelPower_Async(int type, int power, Vector2 pos,bool playAppearAnim = false)
+	{
+		yield return new WaitForSeconds(0.6f);
 		GameObject tmp = JewelSpawner.spawn.SpawnJewelPower(type, power, pos);
+		if(playAppearAnim)
+		tmp.GetComponent<JewelObj> ().JewelEnable ();
 	}
 
 	IEnumerator ActivateStripes(float delay)
@@ -522,11 +538,88 @@ public class Supporter : MonoBehaviour
 
 		for (int row = rowStart  ; row > (rowStart - rowBound) - 1; row --) {
 			for (int column = columnStart - 1; column < (columnStart + columnBound) - 1; column++) {
-				print (new Vector2( (float)column, (float)row) );
 				list.Add( new Vector2( (float)column, (float)row) );
 			}
 		}
 		return list;
+	}
+
+	public MotionDirection GetMotionDirection(Vector2 from , Vector2 to)
+	{
+		Vector3 vect = from - to;
+
+		if( vect.y == 1)
+			return MotionDirection.UP; 
+		if( vect.y == -1)
+			return MotionDirection.DOWN; 
+		if( vect.x == -1)
+			return MotionDirection.LEFT; 
+		if( vect.x == 1)
+			return MotionDirection.RIGHT; 
+
+		return  MotionDirection.NONE; 
+	}
+
+	public void DestroyJewelBasedOnMotionDirection(Vector2 startpos,MotionDirection motionDirection)
+	{
+		StartCoroutine ( DestroyJewelBasedOnMotionDirection_Async(startpos,motionDirection) );
+	}
+
+	IEnumerator DestroyJewelBasedOnMotionDirection_Async(Vector2 startpos,MotionDirection motionDirection)
+	{
+		int boundCol = 9;
+		int boundRow = 7;
+
+		List<Vector2> dirs = new List<Vector2>();
+		switch (motionDirection) {
+
+		case MotionDirection.RIGHT:
+			for(int i = (int)startpos.x ; i < boundRow; i ++)
+			{
+				dirs.Add( new Vector2( (float)i,startpos.y) );
+			}
+			break;
+
+		case MotionDirection.LEFT:
+			for(int i = (int)startpos.x ; i > -1 ; i --)
+			{
+				dirs.Add( new Vector2( (float)i,startpos.y) );
+			}
+			break;
+
+		case MotionDirection.UP:
+			for(int i = (int)startpos.y ; i < boundCol ; i ++)
+			{
+				dirs.Add( new Vector2( startpos.x,(float)i) );
+			}
+			break;
+
+		case MotionDirection.DOWN:
+			for(int i = (int)startpos.y ; i > -1 ; i --)
+			{
+				dirs.Add( new Vector2( startpos.x,(float)i) );
+			}
+			break;
+		}
+
+		for(int i = 1 ; i < dirs.Count ; i++)
+		{
+			JewelObj tmp = JewelSpawner.spawn.JewelGribScript [(int)dirs[i].x, (int)dirs[i].y];
+			if (tmp != null)
+			{
+				if( i < 4 )
+				{
+					int random = Random.Range(6,8);
+					StartCoroutine(SpawnJewelPower_Async(tmp.jewel.JewelType, random, tmp.jewel.JewelPosition,true));
+				}
+				else
+				{
+					tmp.Destroy();
+				}
+			}
+		}
+		yield return new WaitForSeconds(1f);
+		GameController.action.dropjewel ();
 	}
 
 }

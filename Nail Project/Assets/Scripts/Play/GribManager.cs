@@ -62,9 +62,11 @@ public class GribManager : MonoBehaviour
         EffectCrash(Map);
         yield return new WaitForSeconds(1);
         JewelSpawner.spawn.JewelMapCreate(Map);
-        yield return new WaitForEndOfFrame();
+		CellProcess ();
+		yield return new WaitForSeconds(0.5f);
+		yield return new WaitForEndOfFrame();
         JewelSpawner.spawn.EnableAllJewel();
-		CollectItemCells ();
+	
     }
 
     void GribCreate(int[,] map)
@@ -156,7 +158,7 @@ public class GribManager : MonoBehaviour
 	/// <summary>
 	/// Detect items in the given grid
 	/// </summary>
-	void CollectItemCells()
+	void CellProcess()
 	{
 		itemCellPos = new List<Vector2>();
 		// Get all bounds before looping.
@@ -167,7 +169,7 @@ public class GribManager : MonoBehaviour
 		{
 			for(int j = 0 ; j < bound1 ; j ++)
 			{
-				if(Map[i,j] >= 11 && Map[i,j] <= 40)//only item cells type stay in this range
+				if(Map[i,j] >= 11 && Map[i,j] <= 30)//only item cells type stay in this range
 				{
 
 					if(Map[i,j] == 11) //Rectangular
@@ -180,12 +182,19 @@ public class GribManager : MonoBehaviour
 							GribCellObj[i+1,j-1].cell,
 						};
 						PowerItemManager.Instance.CreatePowerItem(cells,ItemType.ICE_CREAM);
-
 					}
+				}
+
+				if(Map[i,j] >= 31 && Map[i,j] <= 40)//special jewels that exist before game start
+				{
+					if(Map[i,j] == 31) //Wheel
+						Supporter.sp.SpawnJewelPower (8, (int)GameController.Power.WHEEL , new Vector2(i,j),true);
 				}
 			}
 		}
 	}
+
+
 
     #region boder create
     void BorderCreate(int[,] map)

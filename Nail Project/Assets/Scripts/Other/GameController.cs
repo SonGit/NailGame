@@ -22,9 +22,10 @@ public class GameController : MonoBehaviour
         COLLUMN_LIGHTING = 3,
         MAGIC = 8,
         TIME = 4,
-		DESTROY_AROUND = 5,
+		WRAPPER = 5,
 		STRIPED_VERTICAL = 6,
 		STRIPED_HORIZONTAL = 7,
+		WHEEL = 9,
     }
 
     public SpawnController drop;
@@ -89,7 +90,7 @@ public class GameController : MonoBehaviour
 
             Supporter.sp.StopSuggestionAnim();
             if (Pointer != null && !Pointer.name.Contains("Jewel"))
-                Pointer = null;
+				Pointer = null;
         }
         else if (Input.GetMouseButton(0) && ishold)
         {
@@ -191,29 +192,39 @@ public class GameController : MonoBehaviour
         int c1 = list1.Count;
         int c2 = list2.Count;
 
-        if (c1 > 2)
-        {
-            ListProcess(list1, obj2, obj1, obj1.GetComponent<JewelObj>().jewel.JewelType);
-        }
-        else if (obj1.GetComponent<JewelObj>().jewel.JewelType == 8)
-        {
-            obj2.GetComponent<JewelObj>().Destroy();
-            PDestroyType(obj2.GetComponent<JewelObj>().jewel.JewelType, obj2.transform.position);
-            obj1.GetComponent<JewelObj>().Destroy();
-        }
+        if (c1 > 2) {
+			ListProcess (list1, obj2, obj1, obj1.GetComponent<JewelObj> ().jewel.JewelType);
+		} else {
+			PowerTypeProcess(obj1,obj2);
+		}
 
-        if (c2 > 2)
-        {
-            ListProcess(list2, obj1, obj2, obj2.GetComponent<JewelObj>().jewel.JewelType);
-        }
-        else if (obj2.GetComponent<JewelObj>().jewel.JewelType == 8)
-        {
-            obj1.GetComponent<JewelObj>().Destroy();
-            PDestroyType(obj1.GetComponent<JewelObj>().jewel.JewelType, obj1.transform.position);
-            obj2.GetComponent<JewelObj>().Destroy();
-        }
+        if (c2 > 2) {
+			ListProcess (list2, obj1, obj2, obj2.GetComponent<JewelObj> ().jewel.JewelType);
+		} else {
+			PowerTypeProcess(obj2,obj1);
+		}
 		
     }
+
+	void PowerTypeProcess(GameObject obj1, GameObject obj2)
+	{
+		int powerType = obj2.GetComponent<JewelObj> ().jewel.JewelPower;
+		switch(powerType)
+		{
+		case (int)GameController.Power.MAGIC:
+			obj1.GetComponent<JewelObj>().Destroy();
+			PDestroyType(obj1.GetComponent<JewelObj>().jewel.JewelType, obj1.transform.position);
+			obj2.GetComponent<JewelObj>().Destroy();
+			break;
+		case (int)GameController.Power.WHEEL:
+
+			//obj1.GetComponent<JewelObj>().Destroy();
+			MotionDirection motionDir = Supporter.sp.GetMotionDirection(obj1.transform.localPosition,obj2.transform.localPosition);
+			Supporter.sp.DestroyJewelBasedOnMotionDirection(obj1.transform.localPosition,motionDir);
+			obj2.GetComponent<JewelObj>().Destroy();
+			break;
+		}
+	}
 
     public void JewelProcess(List<JewelObj> list1, GameObject obj1)
     {
@@ -255,12 +266,13 @@ public class GameController : MonoBehaviour
         {
             //ReGroup(list, type, (int)Power.BOOM, v);
 			Direction dir = Supporter.sp.GetJewelListDirection(list);
+
 			if(dir == Direction.VERTICAL)
-				ReGroup(list, jewelType, (int)Power.STRIPED_VERTICAL, v);
+				ReGroup(list,jewelType, (int)Power.STRIPED_VERTICAL, v);
 			if(dir == Direction.HORIZONTAL)
 				ReGroup(list, jewelType, (int)Power.STRIPED_HORIZONTAL, v);
 		
-            DestroyRandom();
+            //DestroyRandom();
             EffectSpawner.effect.ComBoInc();
             dropjewel();
         }
@@ -275,12 +287,12 @@ public class GameController : MonoBehaviour
 
 			if(shape == JewelShape.L_SHAPED)
 			{
-				ReGroup(list, jewelType, (int)Power.DESTROY_AROUND, v);
+				ReGroup(list, jewelType, (int)Power.WRAPPER, v);
 			}
 
 			if(shape == JewelShape.T_SHAPED)
 			{
-				ReGroup(list, jewelType, (int)Power.DESTROY_AROUND, v);
+				ReGroup(list, jewelType, (int)Power.WRAPPER, v);
 			}
 
 			if(shape == JewelShape.STRAIGHT)
@@ -290,8 +302,8 @@ public class GameController : MonoBehaviour
 
             //ReGroup(list, 8, (int)Power.MAGIC, v);
             EffectSpawner.effect.ComBoInc();
-            DestroyRandom();
-            DestroyRandom();
+            //DestroyRandom();
+            //DestroyRandom();
             dropjewel();
         }
 
@@ -321,7 +333,7 @@ public class GameController : MonoBehaviour
         {
             item.ReGroup(pos);
         }
-        StartCoroutine(SpawnJewelPower(type, power, pos));
+		Supporter.sp.SpawnJewelPower (type, power, pos);
     }
 
     GameObject JewelTouchChecker(Vector3 mouseposition)
@@ -354,14 +366,6 @@ public class GameController : MonoBehaviour
         if (tmp1.jewel.JewelType == 99 || tmp2.jewel.JewelType == 99)
             WinChecker();
 
-    }
-    IEnumerator SpawnJewelPower(int type, int power, Vector2 pos)
-    {
-
-        yield return new WaitForSeconds(0.4f);
-        GameObject tmp = JewelSpawner.spawn.SpawnJewelPower(type, power, pos);
-        yield return new WaitForSeconds(0.2f);
-        tmp.GetComponent<Collider2D>().enabled = true;
     }
 
     public void CellRemoveEffect(int x, int y)
