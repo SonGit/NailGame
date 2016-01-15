@@ -141,12 +141,19 @@ public class GribManager : MonoBehaviour
     {
         Cell script = new Cell();
 
-        if (type > 30)
+		if (type > 50) //Special cells
+		{
+			script.CellType = 2;
+			script.CellEffect = 0;
+		}
+
+        if (type > 30 && type < 50)
         {
             script.CellType = type / 10;
             script.CellEffect = type % 10;
         }
-        else
+
+		if (type < 30)
         {
             script.CellType = type;
             script.CellEffect = 0;
@@ -169,7 +176,7 @@ public class GribManager : MonoBehaviour
 		{
 			for(int j = 0 ; j < bound1 ; j ++)
 			{
-				if(Map[i,j] >= 11 && Map[i,j] <= 30)//only item cells type stay in this range
+				if(Map[i,j] >= 11 && Map[i,j] <= 20)//only item cells type stay in this range
 				{
 
 					if(Map[i,j] == 11) //Rectangular
@@ -185,10 +192,12 @@ public class GribManager : MonoBehaviour
 					}
 				}
 
-				if(Map[i,j] >= 31 && Map[i,j] <= 40)//special jewels that exist before game start
+				if(Map[i,j] >= 50)//special jewels that exist before game start
 				{
-					if(Map[i,j] == 31) //Wheel
+					if(Map[i,j] == 51) //Wheel
 						Supporter.sp.SpawnJewelPower (8, (int)GameController.Power.WHEEL , new Vector2(i,j),true);
+					if(Map[i,j] == 52) //Lucky
+						Supporter.sp.SpawnJewelPower (10, (int)GameController.Power.LUCKY , new Vector2(i,j),true);
 				}
 			}
 		}

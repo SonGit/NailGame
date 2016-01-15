@@ -32,6 +32,8 @@ public class JewelSpawner : MonoBehaviour
 
 	public GameObject JewelWheel;
 
+	public GameObject Lucky;
+
     public GameObject NoSelect;
 
     private const float BaseDistance = 1f;
@@ -352,6 +354,8 @@ public class JewelSpawner : MonoBehaviour
 			return (GameObject)Instantiate(JewelColor);
 			case 9://Wheel
 			return (GameObject)Instantiate(JewelWheel);
+			case 10://Lucky
+			return (GameObject)Instantiate(Lucky);
 			default:
 			return (GameObject)Instantiate(JewelObject);
 		}

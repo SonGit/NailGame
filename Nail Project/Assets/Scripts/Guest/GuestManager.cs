@@ -72,6 +72,17 @@ public class GuestManager : MonoBehaviour {
 		return null;
 	}
 
+	public void GiveItemToFirstFoundGuest()
+	{
+		foreach (GuestPlaceholder guest in _guests) {
+			if(guest._requiredItem != ItemType.NONE && guest._requiredItem != null)
+			{
+				guest.GiveItem();
+				return;
+			}
+		}
+	}
+
 	public void FillGuest(int itemType,int score)
 	{
 		foreach (GuestPlaceholder guest in _guests) {

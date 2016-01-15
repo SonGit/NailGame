@@ -62,6 +62,11 @@ public abstract class BasePowerItem : MonoBehaviour {
 
 	}
 
+	public void ForceComplete()
+	{
+		OnComleted ();
+	}
+
 	void OnComleted()
 	{
 		GuestPlaceholder guest = GameController.action._guestManager.GetGuestThatNeedItem (_type);

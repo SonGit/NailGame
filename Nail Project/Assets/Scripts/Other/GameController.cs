@@ -26,6 +26,7 @@ public class GameController : MonoBehaviour
 		STRIPED_VERTICAL = 6,
 		STRIPED_HORIZONTAL = 7,
 		WHEEL = 9,
+		LUCKY = 10,
     }
 
     public SpawnController drop;
@@ -138,6 +139,15 @@ public class GameController : MonoBehaviour
     {
         JewelObj Jewel1 = obj1.GetComponent<JewelObj>();
         JewelObj Jewel2 = obj2.GetComponent<JewelObj>();
+
+		if (Jewel1.jewel.JewelPower == (int)GameController.Power.LUCKY) {
+			Jewel1.jewel.JewelType = Supporter.sp.LuckyCheck(Jewel2.jewel.JewelPosition);
+		}
+
+		if (Jewel2.jewel.JewelPower == (int)GameController.Power.LUCKY) {
+			Jewel2.jewel.JewelType = Supporter.sp.LuckyCheck(Jewel1.jewel.JewelPosition);
+		}
+
         List<JewelObj> NeiObj1 = Ulti.ListPlus(Jewel1.GetCollumn(Jewel2.jewel.JewelPosition, Jewel1.jewel.JewelType, null),
                                          Jewel1.GetRow(Jewel2.jewel.JewelPosition, Jewel1.jewel.JewelType, null), Jewel1);
         List<JewelObj> NeiObj2 = Ulti.ListPlus(Jewel2.GetCollumn(Jewel1.jewel.JewelPosition, Jewel2.jewel.JewelType, null),
@@ -167,6 +177,15 @@ public class GameController : MonoBehaviour
             Ulti.MoveTo(obj2, obj1.transform.localPosition, 0.2f);
             SwapJewelPosition(obj1, obj2);
             JewelProcess(NeiObj1, NeiObj2, obj1, obj2);
+
+			if (Jewel1.jewel.JewelPower == (int)GameController.Power.LUCKY) {
+				GameController.action._guestManager.GiveItemToFirstFoundGuest ();
+			}
+			
+			if (Jewel2.jewel.JewelPower == (int)GameController.Power.LUCKY) {
+				GameController.action._guestManager.GiveItemToFirstFoundGuest ();
+			}
+
         }
         else
         {
@@ -222,6 +241,10 @@ public class GameController : MonoBehaviour
 			MotionDirection motionDir = Supporter.sp.GetMotionDirection(obj1.transform.localPosition,obj2.transform.localPosition);
 			Supporter.sp.DestroyJewelBasedOnMotionDirection(obj1.transform.localPosition,motionDir);
 			obj2.GetComponent<JewelObj>().Destroy();
+			break;
+
+		case (int)GameController.Power.LUCKY:
+			print ("LUCKY");
 			break;
 		}
 	}

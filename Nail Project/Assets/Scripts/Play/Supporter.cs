@@ -622,4 +622,41 @@ public class Supporter : MonoBehaviour
 		GameController.action.dropjewel ();
 	}
 
+	public int LuckyCheck(Vector2 pos)
+	{
+		int x = (int)pos.x;
+		int y = (int)pos.y;
+
+		if (JewelSpawner.spawn.JewelGribScript [x + 1, y].jewel.JewelType == JewelSpawner.spawn.JewelGribScript [x + 2, y].jewel.JewelType) {
+			return JewelSpawner.spawn.JewelGribScript [x + 1, y].jewel.JewelType;
+		}
+
+		if (JewelSpawner.spawn.JewelGribScript [x - 1, y].jewel.JewelType == JewelSpawner.spawn.JewelGribScript [x - 2, y].jewel.JewelType) {
+			return JewelSpawner.spawn.JewelGribScript [x - 1, y].jewel.JewelType;
+		}
+
+		if (JewelSpawner.spawn.JewelGribScript [x, y + 1].jewel.JewelType == JewelSpawner.spawn.JewelGribScript [x, y + 2].jewel.JewelType) {
+			return JewelSpawner.spawn.JewelGribScript [x, y + 1].jewel.JewelType;
+		}
+
+		if (JewelSpawner.spawn.JewelGribScript [x, y - 1].jewel.JewelType == JewelSpawner.spawn.JewelGribScript [x, y - 2].jewel.JewelType) {
+			return JewelSpawner.spawn.JewelGribScript [x, y - 1].jewel.JewelType;
+		}
+
+		if (JewelSpawner.spawn.JewelGribScript [x + 1, y].jewel.JewelType == JewelSpawner.spawn.JewelGribScript [x -1, y].jewel.JewelType) {
+			return JewelSpawner.spawn.JewelGribScript [x + 1, y].jewel.JewelType;
+		}
+
+		if (JewelSpawner.spawn.JewelGribScript [x, y + 1 ].jewel.JewelType == JewelSpawner.spawn.JewelGribScript [x, y -1].jewel.JewelType) {
+			return JewelSpawner.spawn.JewelGribScript [x, y - 1].jewel.JewelType;
+		}
+
+		return 10;
+	}
+
+	public void LuckEffect( )
+	{
+		GameController.action._guestManager.GiveItemToFirstFoundGuest ();
+	}
+
 }
