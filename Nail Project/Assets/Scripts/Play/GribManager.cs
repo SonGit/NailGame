@@ -53,7 +53,6 @@ public class GribManager : MonoBehaviour
     {
         GribCell = new GameObject[7, 9];
         Map = MapReader(MapName);
-		print (MapName);
         yield return new WaitForEndOfFrame();
         GribCreate(Map);
         yield return new WaitForEndOfFrame();
@@ -133,9 +132,22 @@ public class GribManager : MonoBehaviour
                 tmp[x, y] = int.Parse(stringresult[dem]);
                 dem++;
             }
+
+		SetBooster(stringresult);
+
         return tmp;
 
     }
+
+	void SetBooster(string[] stringresult)
+	{
+		int dem = 64;
+
+		while (dem < stringresult.Length) {
+			print (stringresult[dem]);
+			dem ++;
+		}
+	}
 
     Cell SetCell(int type,int x,int y)
     {

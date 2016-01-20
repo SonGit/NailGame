@@ -28,7 +28,6 @@ public class JewelObj : MonoBehaviour
     //delete jewel
     public void Destroy()
     {
-		print ("Destroy");
 		FillGlass(jewel.JewelType);
         RemoveFromList((int)jewel.JewelPosition.x, (int)jewel.JewelPosition.y);
         StartCoroutine(_Destroy());
@@ -298,19 +297,25 @@ public class JewelObj : MonoBehaviour
             List<JewelObj> list = Ulti.ListPlus(GetRow(jewel.JewelPosition, jewel.JewelType, null),
                                                       GetCollumn(jewel.JewelPosition, jewel.JewelType, null),
                                                       this);
-
+		
             if (list.Count >= 3)
             {
                 listProcess(list);
                 Checked = true;
             }
+			else
+			{
+				//Detect end of move nly when there is no more move
+				if(GameController.action.MoveLeft == 0)
+				GameController.action.StartCountdown();
+			}
+
         }
         else
         {
             GameController.action.WinChecker();
         }
-
-
+		
     }
 
     void listProcess(List<JewelObj> list)

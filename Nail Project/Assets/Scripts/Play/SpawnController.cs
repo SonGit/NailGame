@@ -32,10 +32,11 @@ public class SpawnController : MonoBehaviour
             for (int x = 0; x < 7; x++)
             {
                 if (JewelSpawner.spawn.JewelGribScript[x, y] != null && GribManager.cell.GribCellObj[x, y].cell.CellEffect != 4)
-                    JewelSpawner.spawn.JewelGribScript[x, y].getNewPosition();
+					JewelSpawner.spawn.JewelGribScript[x, y].getNewPosition();
             }
         }
     }
+
     void Spawn()
     {
         int[] h = new int[7];

@@ -131,7 +131,7 @@ public class JewelSpawner : MonoBehaviour
         {
             goto loop;
         }
-		yield return new WaitForSeconds(3f);
+
         EnableAllJewel();
         yield return new WaitForSeconds(0.75f);
         Timer.timer.NoSelect.SetActive(false);

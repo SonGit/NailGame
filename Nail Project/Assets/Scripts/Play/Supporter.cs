@@ -61,9 +61,9 @@ public class Supporter : MonoBehaviour
         AvaiableMove = new Vector2[2];
         AvaiableObj = new JewelObj[2];
 
-        for (int x = 0; x < 7; x++)
+		for (int x = 0; x < GameController.WIDTH; x++)
         {
-            for (int y = 0; y < 9; y++)
+			for (int y = 0; y < GameController.HEIGHT; y++)
             {
                 if (JewelSpawner.spawn.JewelGribScript[x, y] != null && GribManager.cell.GribCellObj[x, y].cell.CellEffect == 0)
                 {
@@ -114,11 +114,11 @@ public class Supporter : MonoBehaviour
     List<Vector2> getListPos(int x, int y)
     {
         vtmplist = new List<Vector2>();
-        if (y + 1 < 9 && GribManager.cell.GribCellObj[x, y + 1] != null && GribManager.cell.GribCellObj[x, y + 1].cell.CellEffect == 0)
+		if (y + 1 < GameController.HEIGHT && GribManager.cell.GribCellObj[x, y + 1] != null && GribManager.cell.GribCellObj[x, y + 1].cell.CellEffect == 0)
             vtmplist.Add(new Vector2(x, y + 1));
         if (y - 1 >= 0 && GribManager.cell.GribCellObj[x, y - 1] != null && GribManager.cell.GribCellObj[x, y - 1].cell.CellEffect == 0)
             vtmplist.Add(new Vector2(x, y - 1));
-        if (x + 1 < 7 && GribManager.cell.GribCellObj[x + 1, y] != null && GribManager.cell.GribCellObj[x + 1, y].cell.CellEffect == 0)
+		if (x + 1 < GameController.WIDTH && GribManager.cell.GribCellObj[x + 1, y] != null && GribManager.cell.GribCellObj[x + 1, y].cell.CellEffect == 0)
             vtmplist.Add(new Vector2(x + 1, y));
         if (x - 1 >= 0 && GribManager.cell.GribCellObj[x - 1, y] != null && GribManager.cell.GribCellObj[x - 1, y].cell.CellEffect == 0)
             vtmplist.Add(new Vector2(x - 1, y));
@@ -269,7 +269,7 @@ public class Supporter : MonoBehaviour
 	}
 
 	//Get tiles up,down,left,right
-	Vector2[] Get4DirectionVector(Vector2 centerPos)
+	public Vector2[] Get4DirectionVector(Vector2 centerPos)
 	{
 		return new Vector2[]
 		{
@@ -411,8 +411,8 @@ public class Supporter : MonoBehaviour
 
 	void ComboStripe_Color(int type)
 	{
-		for (int x = 0; x < 7; x++) {
-			for (int y = 0; y < 9; y++) {
+		for (int x = 0; x < GameController.WIDTH; x++) {
+			for (int y = 0; y < GameController.HEIGHT; y++) {
 				JewelObj tmp = JewelSpawner.spawn.JewelGribScript [x, y];
 				if (tmp != null && tmp.jewel.JewelType == type) {
 
@@ -437,8 +437,8 @@ public class Supporter : MonoBehaviour
 
 	IEnumerator ComboColor_Color()
 	{
-		for (int x = 0; x < 7; x++) {
-			for (int y = 0; y < 9; y++) {
+		for (int x = 0; x < GameController.WIDTH; x++) {
+			for (int y = 0; y < GameController.HEIGHT; y++) {
 				JewelObj tmp = JewelSpawner.spawn.JewelGribScript [x, y];
 				if (tmp != null)
 				{
@@ -470,8 +470,8 @@ public class Supporter : MonoBehaviour
 
 	IEnumerator DestroyJewelType(int type)
 	{
-		for (int x = 0; x < 7; x++) {
-			for (int y = 0; y < 9; y++) {
+		for (int x = 0; x < GameController.WIDTH; x++) {
+			for (int y = 0; y < GameController.HEIGHT; y++) {
 				JewelObj tmp = JewelSpawner.spawn.JewelGribScript [x, y];
 				if (tmp != null && tmp.jewel.JewelType == type)
 				{
@@ -501,8 +501,8 @@ public class Supporter : MonoBehaviour
 	{
 		yield return new WaitForSeconds(delay);
 
-		for (int x = 0; x < 7; x++) {
-			for (int y = 0; y < 9; y++) {
+		for (int x = 0; x < GameController.WIDTH; x++) {
+			for (int y = 0; y < GameController.HEIGHT; y++) {
 				JewelObj tmp = JewelSpawner.spawn.JewelGribScript [x, y];
 				if (tmp != null)
 				{
@@ -518,8 +518,8 @@ public class Supporter : MonoBehaviour
 
 	public bool CheckValidPosition(Vector2 pos)
 	{
-		int bound0 = 7;
-		int bound1 = 9;
+		int bound0 = GameController.WIDTH;
+		int bound1 = GameController.HEIGHT;
 
 		if ((pos.x < bound0 && pos.y < bound1) && (pos.x >= 0 && pos.y >= 0)) {
 			return true;
@@ -560,15 +560,15 @@ public class Supporter : MonoBehaviour
 		return  MotionDirection.NONE; 
 	}
 
-	public void DestroyJewelBasedOnMotionDirection(Vector2 startpos,MotionDirection motionDirection)
+	public void WheelEffect(Vector2 startpos,MotionDirection motionDirection)
 	{
-		StartCoroutine ( DestroyJewelBasedOnMotionDirection_Async(startpos,motionDirection) );
+		StartCoroutine ( WheelEffect_Async(startpos,motionDirection) );
 	}
 
-	IEnumerator DestroyJewelBasedOnMotionDirection_Async(Vector2 startpos,MotionDirection motionDirection)
+	IEnumerator WheelEffect_Async(Vector2 startpos,MotionDirection motionDirection)
 	{
-		int boundCol = 9;
-		int boundRow = 7;
+		int boundCol = GameController.HEIGHT;
+		int boundRow = GameController.WIDTH;
 
 		List<Vector2> dirs = new List<Vector2>();
 		switch (motionDirection) {

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
@@ -9,6 +10,12 @@ public class GameController : MonoBehaviour
 
     public static float DROP_SPEED = 8;
     public static float DROP_DELAY = 0.5f;
+
+	public static float TIMEOUT = 1.5f;
+
+	public static int WIDTH = 7;
+	public static int HEIGHT = 9;
+
 
     public int GameState;
 
@@ -45,6 +52,8 @@ public class GameController : MonoBehaviour
 
 	public GuestManager _guestManager;
 
+	public Text MoveLeftLabel;
+
     private JewelObj JewelScript;
     private JewelObj JewelScript1;
 
@@ -53,14 +62,35 @@ public class GameController : MonoBehaviour
     private GameObject Selected;
 
     bool ishold;
+
+	private int _MoveLeft;
+
+	public int MoveLeft
+	{
+		get
+		{
+			return _MoveLeft;
+		}
+
+		set
+		{
+			_MoveLeft = value;
+			MoveLeftLabel.text = _MoveLeft.ToString();
+		}
+	}
+
+	bool EndOfMoveCountdown = false;
+
+	float EndOfMoveTimeout;
+
     void Awake()
     {
         action = this;
+	
     }
 
     IEnumerator Start()
     {
-
         if (PLayerInfo.MODE == 1)
             StartCoroutine(GribManager.cell.GribMapCreate(PLayerInfo.MapPlayer.Name));
         else
@@ -70,13 +100,39 @@ public class GameController : MonoBehaviour
         Timer.timer.TimeTick(true);
         GameState = (int)Timer.GameState.PLAYING;
         NoSelect.SetActive(false);
+		MoveLeft = 2;
     }
+
+	//Detect if the board is return to idle state after processing jewels
+	public void StartCountdown()
+	{
+		EndOfMoveTimeout = TIMEOUT;
+		EndOfMoveCountdown = true;
+	}
 
     void Update()
     {
+		//If there is no more move,ignore input
+		if(MoveLeft > 0)
         JewelSelecter();
+
         backpress();
+
+		if (EndOfMoveCountdown) {
+			EndOfMoveTimeout -= Time.deltaTime;
+			if(EndOfMoveTimeout <= 0)
+			{
+				OnEndOfMove();
+				EndOfMoveCountdown = false;
+			}
+		}
     }
+
+	void OnEndOfMove()
+	{
+		print ("END OF MOVE");
+	}
+
     //process click action
     void JewelSelecter()
     {
@@ -160,9 +216,9 @@ public class GameController : MonoBehaviour
 		//After that, return to normal operations
 
 		//If there is a combo, let combo operation handle it
-		if (hasCombo)
+		if (hasCombo) 
 			return;
-
+		
         if (Jewel1.jewel.JewelType == 99 || Jewel2.jewel.JewelType == 99)
             if (Jewel1.jewel.JewelType == 8 || Jewel2.jewel.JewelType == 8)
             {
@@ -186,12 +242,15 @@ public class GameController : MonoBehaviour
 				GameController.action._guestManager.GiveItemToFirstFoundGuest ();
 			}
 
+			//Valid move, so minus a move
+			MoveChecker();
         }
         else
         {
             Jewel1.SetBackAnimation(obj2);
             Jewel2.SetBackAnimation(obj1);
         }
+		
     }
 
     void backpress()
@@ -239,7 +298,7 @@ public class GameController : MonoBehaviour
 
 			//obj1.GetComponent<JewelObj>().Destroy();
 			MotionDirection motionDir = Supporter.sp.GetMotionDirection(obj1.transform.localPosition,obj2.transform.localPosition);
-			Supporter.sp.DestroyJewelBasedOnMotionDirection(obj1.transform.localPosition,motionDir);
+			Supporter.sp.WheelEffect(obj1.transform.localPosition,motionDir);
 			obj2.GetComponent<JewelObj>().Destroy();
 			break;
 
@@ -677,7 +736,17 @@ public class GameController : MonoBehaviour
             Timer.timer.Win();
             Destroy(JewelStar.gameObject);
         }
+
+
     }
+
+	public void MoveChecker()
+	{
+		MoveLeft --;
+		if (MoveLeft <= 0) {
+			Timer.timer.Lost ();
+		} 
+	}
 
     void EnableSelector(Vector3 pos)
     {
