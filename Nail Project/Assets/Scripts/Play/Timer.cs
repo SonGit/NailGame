@@ -118,7 +118,7 @@ public class Timer : MonoBehaviour
         {
             GameController.action.GameState = (int)GameState.LOST;
             GameTime = 0;
-            Lost();
+            //Lost();
             update.enabled = false;
         }
     }
@@ -130,8 +130,19 @@ public class Timer : MonoBehaviour
         StartCoroutine(IEWin());
         Debug.Log("WIN");
     }
+
+	public void Win2()
+	{
+		GameController.action.GameState = (int)GameState.WIN;
+		NoSelect.SetActive(true);
+	}
+
     public void Lost()
     {
+		//If win comes first,lost does not count
+		if (GameController.action.GameState == (int)GameState.WIN)
+			return;
+
         GameController.action.GameState = (int)GameState.LOST;
         NoSelect.SetActive(true);
         EffectSpawner.effect.SetScore(PLayerInfo.Info.Score);
@@ -212,9 +223,9 @@ public class Timer : MonoBehaviour
     IEnumerator IEWin()
     {
         DisableJewel(true);
-        EffectSpawner.effect.StarWinEffect(GameController.action.JewelStar.gameObject.transform.position);
+        //EffectSpawner.effect.StarWinEffect(GameController.action.JewelStar.gameObject.transform.position);
         SoundController.Sound.Win();
-        GameController.action.JewelStar.gameObject.transform.GetChild(0).gameObject.SetActive(false);
+        //GameController.action.JewelStar.gameObject.transform.GetChild(0).gameObject.SetActive(false);
         yield return new WaitForSeconds(1f);
         WinUI.SetActive(true);
         showFullAds();

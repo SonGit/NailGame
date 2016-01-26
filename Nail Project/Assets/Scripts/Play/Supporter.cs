@@ -659,4 +659,80 @@ public class Supporter : MonoBehaviour
 		GameController.action._guestManager.GiveItemToFirstFoundGuest ();
 	}
 
+	public void ProcessComboEffect(int ComboCount)
+	{
+		if (ComboCount == 2)
+			EffectSpawner.effect.SweetComboEffect();
+		if (ComboCount == 3)
+			EffectSpawner.effect.TastyComboEffect ();
+		if (ComboCount > 3 && ComboCount <= 6)
+			EffectSpawner.effect.DeliciousComboEffect ();
+		if (ComboCount > 6)
+			EffectSpawner.effect.DivineComboEffect ();
+	}
+
+	public void StartEndgamePhase()
+	{
+		Timer.timer.Win2 ();
+		EffectSpawner.effect.EndgameEffect ();
+		StartCoroutine (Endgame());
+	}
+
+	IEnumerator Endgame()
+	{
+		int movesLeft = GameController.action.MoveLeft;
+		int spawnPerMove = 2;
+		int[] validPowers = new int[]
+		{
+			6,//STRIPED_VERTICAL
+			7,//STRIPED_HORIZONTAL
+			5,//WRAPPER
+		};
+		
+		for (int i = 0; i < movesLeft; i ++) {
+			
+			for(int j = 0 ; j < spawnPerMove ; j++)
+			{
+				Vector2 location = GetRandomLocation();
+				int rand = Random.Range(0,validPowers.Length);
+				Supporter.sp.SpawnJewelPower (JewelSpawner.spawn.JewelGribScript [ (int)location.x, (int)location.y].jewel.JewelType , validPowers[rand] , location ,true);
+			}
+		
+			yield return new WaitForSeconds(0.5f);
+		}
+
+		yield return new WaitForSeconds(2f);
+
+		for (int x = 0; x < GameController.WIDTH; x++) {
+			for (int y = 0; y < GameController.HEIGHT; y++) {
+				JewelObj tmp = JewelSpawner.spawn.JewelGribScript [x, y];
+				if (tmp != null && tmp.jewel != null)
+				{
+					if ( tmp.jewel.JewelPower != 0) {
+						tmp.Destroy();
+						yield return new WaitForSeconds(1f);
+					}
+				}
+				
+			}
+		}
+
+		Timer.timer.Win ();
+
+	}
+
+	Vector2 GetRandomLocation()
+	{
+		int randWidth = Random.Range (0, GameController.WIDTH);
+		int randHeight = Random.Range (0, GameController.HEIGHT);
+		
+		JewelObj tmp = JewelSpawner.spawn.JewelGribScript [randWidth, randHeight];
+		
+		if (tmp != null) 
+			if(tmp.jewel.JewelPower == 0)
+				return new Vector2 (randWidth, randHeight);
+		
+		return GetRandomLocation();
+	}
+
 }

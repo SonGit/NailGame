@@ -100,7 +100,7 @@ public class GameController : MonoBehaviour
         Timer.timer.TimeTick(true);
         GameState = (int)Timer.GameState.PLAYING;
         NoSelect.SetActive(false);
-		MoveLeft = 2;
+		MoveLeft = 16;
     }
 
 	//Detect if the board is return to idle state after processing jewels
@@ -131,6 +131,7 @@ public class GameController : MonoBehaviour
 	void OnEndOfMove()
 	{
 		print ("END OF MOVE");
+		Timer.timer.Lost ();
 	}
 
     //process click action
@@ -743,9 +744,6 @@ public class GameController : MonoBehaviour
 	public void MoveChecker()
 	{
 		MoveLeft --;
-		if (MoveLeft <= 0) {
-			Timer.timer.Lost ();
-		} 
 	}
 
     void EnableSelector(Vector3 pos)

@@ -143,10 +143,17 @@ public class GribManager : MonoBehaviour
 	{
 		int dem = 64;
 
+		if (dem > stringresult.Length)
+			return;
+
+		List<int> boosters = new List<int>();
+
 		while (dem < stringresult.Length) {
-			print (stringresult[dem]);
+			boosters.Add( int.Parse(stringresult[dem]) ) ;
 			dem ++;
 		}
+
+		BoosterManager.Instance.SetBoosters (boosters);
 	}
 
     Cell SetCell(int type,int x,int y)

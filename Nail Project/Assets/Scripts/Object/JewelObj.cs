@@ -29,6 +29,11 @@ public class JewelObj : MonoBehaviour
     public void Destroy()
     {
 		FillGlass(jewel.JewelType);
+
+		GuestPlaceholder guest = GameController.action._guestManager.GetGuestThatNeedJewel (jewel.JewelType);
+		if(guest != null)
+		EffectSpawner.effect.MiniStar (transform.position,guest.transform.position);
+
         RemoveFromList((int)jewel.JewelPosition.x, (int)jewel.JewelPosition.y);
         StartCoroutine(_Destroy());
     }
@@ -80,6 +85,8 @@ public class JewelObj : MonoBehaviour
 				GameController.action.PDestroyRow((int)jewel.JewelPosition.x, (int)jewel.JewelPosition.y);
 				break;
         }
+
+		EffectSpawner.effect.ComBoInc();
     }
 
     //move jewel and destroy

@@ -1,14 +1,82 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine.UI;
+
+public enum BoosterType
+{
+	MORE_MOVES,
+	TIME,
+	COMBO,
+	WHEEL,
+	COLOUR_BOMB,
+}
 
 public class BoosterManager : MonoBehaviour {
 
 	public static BoosterManager Instance ;
 
+	public GameObject boosterBtnPrefab;
+
+	public RectTransform grid;
+
 	void Awake()
 	{
 		Instance = this;
 	}
+
+	public void SetBoosters(List<int> boosterTypes)
+	{
+		foreach(int type in boosterTypes)
+		{
+			CreateBoosterButtons(type);
+		}
+	}
+
+	void CreateBoosterButtons(int boosterType)
+	{
+		GameObject btnObj = (GameObject) Instantiate( boosterBtnPrefab );
+		btnObj.transform.parent = grid;
+		btnObj.transform.localScale = Vector3.one;
+
+		Button btn = btnObj.GetComponent<Button>();
+		Text label = btn.GetComponentInChildren<Text>();
+
+		switch(boosterType)
+		{
+
+		case 0:
+			btnObj.AddComponent<BoosterMoreMove>();
+			label.text = "MORE MOVE";
+			break;
+
+		case 1:
+			btnObj.AddComponent<BoosterTime>();
+			label.text = "MORE TIME";
+			break;
+
+		case 2:
+			btnObj.AddComponent<BoosterCombo>();
+			label.text = "COMBO";
+			break;
+
+		case 3:
+			btnObj.AddComponent<BoosterWheel>();
+			label.text = "WHEEL";
+			break;
+
+		case 4:
+			btnObj.AddComponent<BoosterBomb>();
+			label.text = "BOMB";
+			break;
+		}
+
+	
+		btn.onClick.AddListener(() => {
+			 btnObj.GetComponent<BoosterBase>().OnClick();
+		});
+	}
+	
 
 	public void TimeBooster()
 	{
@@ -67,4 +135,5 @@ public class BoosterManager : MonoBehaviour {
 
 		return GetRandomLocation(offset_x,offset_y);
 	}
+
 }

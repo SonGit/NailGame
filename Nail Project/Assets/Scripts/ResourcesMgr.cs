@@ -70,6 +70,14 @@ public class ResourcesMgr{
 		return null;
 	}
 
+	public static void Init()
+	{
+		ResourcesMgr.LoadResources (ResourcesMgr.ResourceType.SPRITE,
+		                            ResourcesMgr.GuestItemAnim);
+		ResourcesMgr.LoadResources (ResourcesMgr.ResourceType.SPRITE,
+		                            ResourcesMgr.ItemSprites);
+	}
+
 	//Animation Guest
 	public static readonly string Anim_Bee = "Anim_Bee";
 

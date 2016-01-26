@@ -24,6 +24,10 @@ public class GuestPlaceholder : MonoBehaviour {
 
 	private GuestManager _guestManager;
 
+	public bool _readyToTakeOrder;
+
+	public bool _isActive;
+
 	void Start () {
 		_guestManager = this.GetComponentInParent<GuestManager>();
 	}
@@ -35,6 +39,8 @@ public class GuestPlaceholder : MonoBehaviour {
 		_type = guestType;
 		_requiredJewel = jewelType;
 		_requiredQuantity = quantity;
+		_readyToTakeOrder = false;
+		_isActive = true;
 
 		_guestSprite.sprite = ResourcesMgr.GetSprite ( GetGuestSpriteName(guestType) );
 		_jewelSprite.sprite = JewelSpawner.spawn.GetJewelSprite (jewelType);
@@ -42,7 +48,19 @@ public class GuestPlaceholder : MonoBehaviour {
 
 		_requiredItem = ItemType.NONE;
 
+		_jewelSprite.enabled = false;
+		_quantityLabel.enabled = false;
 		anim.Play("GuestMoveIn");
+
+		Invoke ("StartOrder",2.1f);
+	}
+
+	void StartOrder()
+	{
+		_jewelSprite.enabled = true;
+		_quantityLabel.enabled = true;
+		_readyToTakeOrder = true;
+		_isActive = true;
 	}
 
 	public void Init(GuestType guestType,ItemType itemType)
@@ -78,7 +96,7 @@ public class GuestPlaceholder : MonoBehaviour {
 
 	public void Fill(int score)
 	{
-		if (_requiredItem != ItemType.NONE)
+		if (_requiredItem != ItemType.NONE || !_readyToTakeOrder)
 			return;
 
 		_requiredQuantity -= score;
@@ -117,8 +135,17 @@ public class GuestPlaceholder : MonoBehaviour {
 
 	void MoveOut()
 	{
-		anim.Play ("GuestMoveOut");
+		_isActive = false;
+		_readyToTakeOrder = false;
 		_quantityLabel.text = "OK!!";
+		_guestManager.OnLeaveQueue ();
+
+		Invoke ("PlayMoveout_Anim",2);
+	}
+
+	void PlayMoveout_Anim()
+	{
+		anim.Play ("GuestMoveOut");
 	}
 }
 

@@ -25,8 +25,8 @@ public class AdmobGA : MonoBehaviour
     void Start()
     {
         // Start Session Google Analytics
-        GA.StartSession();
+        //GA.StartSession();
         // Request banner Google Admob
-        GoogleMobileAdsScript.advertise.RequestBanner();
+        //GoogleMobileAdsScript.advertise.RequestBanner();
     }
 }

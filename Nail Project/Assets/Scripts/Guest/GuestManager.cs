@@ -7,24 +7,33 @@ public class GuestManager : MonoBehaviour {
 	
 	public GuestPlaceholder[] _guests;
 	public Text _numQueueLabel;
-	public int _numQueue;
+	int _numqueue;
+	int _totalGuest;
+	public int _numQueue
+	{
+		get
+		{
+			return _numqueue;
+		}
+
+		set
+		{
+			_numqueue = value;
+			if(value > -1)
+			_numQueueLabel.text = _numQueue.ToString ();
+		}
+	}
 
 	void Awake()
 	{
-		ResourcesMgr.LoadResources (ResourcesMgr.ResourceType.SPRITE,
-		                            ResourcesMgr.GuestItemAnim);
-		ResourcesMgr.LoadResources (ResourcesMgr.ResourceType.SPRITE,
-		                            ResourcesMgr.ItemSprites);
+
 	}
 	
 	// Use this for initialization
 	void Start () {
+		_numQueue = 2;
+		_totalGuest = _numQueue + 3; //total = guest on the bar + queued guest
 		InitGuests ();
-		
-		_numQueue = 5;
-		_numQueueLabel.text = _numQueue.ToString ();
-
-		
 	}
 	
 	// Update is called once per frame
@@ -37,7 +46,9 @@ public class GuestManager : MonoBehaviour {
 	
 	public void RefillGuest(GuestPlaceholder guest)
 	{
-		OnLeaveQueue ();
+		if (_numQueue <= 0)
+			return;
+
 		InitGuest (guest);
 	}
 
@@ -45,15 +56,15 @@ public class GuestManager : MonoBehaviour {
 	{
 		int rand = UnityEngine.Random.Range (0,2);
 		//if(rand == 0)
-			//guest.Init( GetRandomizedGuestType(), GetRandomizedJewelType(), GetRamdomizedQuantity() );
+			guest.Init( GetRandomizedGuestType(), GetRandomizedJewelType(), GetRamdomizedQuantity() );
 		//else
-			guest.Init( GetRandomizedGuestType(), GetRandomizedItemType() );
+			//guest.Init( GetRandomizedGuestType(), GetRandomizedItemType() );
 	}
 	
 	public GuestPlaceholder GetGuestThatNeedJewel(int jewelType)
 	{
 		foreach (GuestPlaceholder guest in _guests) {
-			if(guest._requiredJewel == jewelType)
+			if(guest._requiredJewel == jewelType && guest._readyToTakeOrder)
 			{
 				return guest;
 			}
@@ -64,7 +75,7 @@ public class GuestManager : MonoBehaviour {
 	public GuestPlaceholder GetGuestThatNeedItem(ItemType itemType)
 	{
 		foreach (GuestPlaceholder guest in _guests) {
-			if(guest._requiredItem == itemType)
+			if(guest._requiredItem == itemType && guest._readyToTakeOrder)
 			{
 				return guest;
 			}
@@ -86,7 +97,7 @@ public class GuestManager : MonoBehaviour {
 	public void FillGuest(int itemType,int score)
 	{
 		foreach (GuestPlaceholder guest in _guests) {
-			if(guest._requiredJewel == itemType)
+			if(guest._requiredJewel == itemType && guest._readyToTakeOrder)
 			{
 				guest.Fill(score);
 				return;
@@ -133,11 +144,14 @@ public class GuestManager : MonoBehaviour {
 		return UnityEngine.Random.Range (3,10);
 	}
 	
-	private void OnLeaveQueue()
+	public void OnLeaveQueue()
 	{
-		if (_numQueue > -1) {
-			_numQueue --;
-			_numQueueLabel.text = _numQueue.ToString ();
-		}
+		_numQueue --;
+		_totalGuest --;
+		print (_totalGuest);
+		if(_totalGuest <= 1)
+			Supporter.sp.StartEndgamePhase();
+
 	}
+	
 }

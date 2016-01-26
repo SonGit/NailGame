@@ -10,6 +10,8 @@ public class EffectSpawner : MonoBehaviour
 
     public GameObject[] EffectPrefabs;
 
+	public GameObject[] ComboEffectPrefabs;
+
 	public GameObject ItemPrefab;
 
 	public GameObject CellGrid;
@@ -24,7 +26,7 @@ public class EffectSpawner : MonoBehaviour
     public UnityEngine.UI.Text Score;
     public UnityEngine.UI.Image Energy;
 
-    public float REFRESH_COMBO_TIME = 2f;
+    public float REFRESH_COMBO_TIME = 2;
 
     private const float BOOM_TIME = 0.5f;
 
@@ -33,6 +35,8 @@ public class EffectSpawner : MonoBehaviour
     private const float JEWELCASH_TIME = 0.35f;
 
     private const float SCORESHOW_TIME = 0.5f;
+
+	private const float SCOREANN_TIME = 1;
 
     private const float THUNDER_TIME = 0.4f;
 
@@ -83,12 +87,11 @@ public class EffectSpawner : MonoBehaviour
             if (GameController.action.GameState == (int)Timer.GameState.PLAYING)
                 PLayerInfo.Info.Score += scorebonus;
             BonusEffect();
-            MiniStar(pos);
+           // MiniStar(pos);
         }
 
         ScoreEff(scorebonus, pos);
         SetScore(PLayerInfo.Info.Score);
-
     }
 
     private void BonusEffect()
@@ -142,6 +145,46 @@ public class EffectSpawner : MonoBehaviour
         tmp.transform.position = new Vector3(pos.x, pos.y, tmp.transform.position.z);
         Destroy(tmp, SCORESHOW_TIME);
     }
+
+	public void EndgameEffect()
+	{
+		GameObject tmp = (GameObject)Instantiate(EffectPrefabs[13]);
+		Animation anim = tmp.GetComponent<Animation>();
+		anim.Play ("ScoreAnim");
+		Destroy(tmp, SCOREANN_TIME);
+	}
+
+	public void SweetComboEffect()
+	{
+		GameObject tmp = (GameObject)Instantiate(ComboEffectPrefabs[0]);
+		Animation anim = tmp.GetComponent<Animation>();
+		anim.Play ("ScoreAnim");
+		Destroy(tmp, SCOREANN_TIME);
+	}
+
+	public void TastyComboEffect()
+	{
+		GameObject tmp = (GameObject)Instantiate(ComboEffectPrefabs[1]);
+		Animation anim = tmp.GetComponent<Animation>();
+		anim.Play ("ScoreAnim");
+		Destroy(tmp, SCOREANN_TIME);
+	}
+
+	public void DeliciousComboEffect()
+	{
+		GameObject tmp = (GameObject)Instantiate(ComboEffectPrefabs[2]);
+		Animation anim = tmp.GetComponent<Animation>();
+		anim.Play ("ScoreAnim");
+		Destroy(tmp, SCOREANN_TIME);
+	}
+
+	public void DivineComboEffect()
+	{
+		GameObject tmp = (GameObject)Instantiate(ComboEffectPrefabs[3]);
+		Animation anim = tmp.GetComponent<Animation>();
+		anim.Play ("ScoreAnim");
+		Destroy(tmp, SCOREANN_TIME);
+	}
 
     public void SetLevel(int lv)
     {
@@ -287,7 +330,12 @@ public class EffectSpawner : MonoBehaviour
             if (ComboCountdown > 0)
                 ComboCountdown -= Time.deltaTime;
             else
-                ComboCount = 0;
+			{
+				//When countdon is done, calculate the accumulated combo for effect
+				Supporter.sp.ProcessComboEffect(ComboCount);
+				ComboCount = 0;
+			}
+               
             yield return null;
         }
     }
@@ -335,6 +383,14 @@ public class EffectSpawner : MonoBehaviour
         Ulti.MoveTo(tmp, startpos, new Vector2(-2.485f, 4.418f), 1.2f, -2.2f);
         Destroy(tmp, 1.2f);
     }
+
+	public void MiniStar(Vector3 startpos,Vector3 endpos)
+	{
+		GameObject tmp = (GameObject)Instantiate(EffectPrefabs[12]);
+		tmp.transform.SetParent(parent.transform, false);
+		Ulti.MoveTo(tmp, startpos, endpos, 1.2f, -2.2f);
+		Destroy(tmp, 1.2f);
+	}
 
 	public Item CreateItem(ItemType type,Vector2 location)
 	{
