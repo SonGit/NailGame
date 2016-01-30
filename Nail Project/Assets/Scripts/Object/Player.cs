@@ -59,6 +59,8 @@ public class PlayerUtils
             p.Stars = int.Parse(dataSplit[i * 4 + 1]);
             p.HightScore = int.Parse(dataSplit[i * 4 + 2]);
             p.Background = int.Parse(dataSplit[i * 4 + 3]);
+
+			p.Locked = false;
             list.Add(p);
         }
 

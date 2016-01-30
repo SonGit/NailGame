@@ -212,7 +212,7 @@ public class GameController : MonoBehaviour
 
 		//Take a peek into the future destination
 		SwapJewelPosition(obj1, obj2);
-		bool hasCombo = Supporter.sp.ComboProcess (obj1);
+		bool hasCombo = ComboManager.Instance.ComboProcess (obj1);
 		SwapJewelPosition(obj1, obj2);
 		//After that, return to normal operations
 
@@ -241,6 +241,11 @@ public class GameController : MonoBehaviour
 			
 			if (Jewel2.jewel.JewelPower == (int)GameController.Power.LUCKY) {
 				GameController.action._guestManager.GiveItemToFirstFoundGuest ();
+			}
+
+			if(NeiObj1.Count == 3 || NeiObj2.Count == 3)
+			{
+				Supporter.sp.SpawnARandomStripe(Jewel1.jewel.JewelType);
 			}
 
 			//Valid move, so minus a move
@@ -296,15 +301,14 @@ public class GameController : MonoBehaviour
 			obj2.GetComponent<JewelObj>().Destroy();
 			break;
 		case (int)GameController.Power.WHEEL:
-
 			//obj1.GetComponent<JewelObj>().Destroy();
 			MotionDirection motionDir = Supporter.sp.GetMotionDirection(obj1.transform.localPosition,obj2.transform.localPosition);
-			Supporter.sp.WheelEffect(obj1.transform.localPosition,motionDir);
+			EffectSpawner.effect.WheelEffect(obj1.transform.localPosition,motionDir);
 			obj2.GetComponent<JewelObj>().Destroy();
 			break;
 
 		case (int)GameController.Power.LUCKY:
-			print ("LUCKY");
+			GameController.action._guestManager.GiveItemToFirstFoundGuest ();
 			break;
 		}
 	}
@@ -734,8 +738,8 @@ public class GameController : MonoBehaviour
 
         if ((int)JewelStar.jewel.JewelPosition.y == Min)
         {
-            Timer.timer.Win();
-            Destroy(JewelStar.gameObject);
+            //Timer.timer.Win();
+            //Destroy(JewelStar.gameObject);
         }
 
 

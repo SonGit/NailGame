@@ -25,6 +25,17 @@ public class JewelObj : MonoBehaviour
 
 	public Direction direction; //completely optional,only for strpied candy effect
 
+	IEnumerator Start()
+	{
+		yield return new WaitForSeconds (1.5f);
+		//Animation anim = transform.GetChild(0).GetComponent<Animation>();
+		//anim.enabled = true;
+
+		//anim.Blend("MoveBack_Up", 1, 0);
+		//.Blend("MoveBack_Left", 1, 0);
+
+	}
+
     //delete jewel
     public void Destroy()
     {
@@ -198,22 +209,26 @@ public class JewelObj : MonoBehaviour
             {
                 if (ObjPos.y > jewel.JewelPosition.y)
                 {
-                    anim.Play("MoveBack_Up");
+					anim.Blend("MoveBack_Up", 1, 0);
+                    //anim.Play("MoveBack_Up");
                 }
                 else
                 {
-                    anim.Play("MoveBack_Down");
+					anim.Blend("MoveBack_Down", 1, 0);
+                   // anim.Play("MoveBack_Down");
                 }
             }
             else
             {
                 if (ObjPos.x > jewel.JewelPosition.x)
                 {
-                    anim.Play("MoveBack_Right");
+					anim.Blend("MoveBack_Right", 1, 0);
+                    //anim.Play("MoveBack_Right");
                 }
                 else
                 {
-                    anim.Play("MoveBack_Left");
+					anim.Blend("MoveBack_Left", 1, 0);
+                   // anim.Play("MoveBack_Left");
                 }
             }
         }

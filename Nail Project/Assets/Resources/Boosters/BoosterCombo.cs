@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class BoosterCombo : BoosterBase {
@@ -12,7 +12,7 @@ public class BoosterCombo : BoosterBase {
 		
 		foreach(Vector2 vect in neighboringLocations)
 		{
-			if(Supporter.sp.CheckValidPosition(vect))
+			if(Supporter.sp.CheckOutOfBounds(vect))
 			{
 				JewelObj tmp = JewelSpawner.spawn.JewelGribScript [ (int)vect.x, (int)vect.y];
 				if (tmp != null) 

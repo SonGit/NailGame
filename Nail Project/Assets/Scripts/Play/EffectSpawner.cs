@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class EffectSpawner : MonoBehaviour
 {
@@ -400,5 +401,67 @@ public class EffectSpawner : MonoBehaviour
 		Item item = go.GetComponent<Item>();
 		item.Init (type);
 		return item;
+	}
+
+	public void WheelEffect(Vector2 startpos,MotionDirection motionDirection)
+	{
+		StartCoroutine ( WheelEffect_Async(startpos,motionDirection) );
+	}
+	
+	IEnumerator WheelEffect_Async(Vector2 startpos,MotionDirection motionDirection)
+	{
+		int boundCol = GameController.HEIGHT;
+		int boundRow = GameController.WIDTH;
+		
+		List<Vector2> dirs = new List<Vector2>();
+		switch (motionDirection) {
+			
+		case MotionDirection.RIGHT:
+			for(int i = (int)startpos.x ; i < boundRow; i ++)
+			{
+				dirs.Add( new Vector2( (float)i,startpos.y) );
+			}
+			break;
+			
+		case MotionDirection.LEFT:
+			for(int i = (int)startpos.x ; i > -1 ; i --)
+			{
+				dirs.Add( new Vector2( (float)i,startpos.y) );
+			}
+			break;
+			
+		case MotionDirection.UP:
+			for(int i = (int)startpos.y ; i < boundCol ; i ++)
+			{
+				dirs.Add( new Vector2( startpos.x,(float)i) );
+			}
+			break;
+			
+		case MotionDirection.DOWN:
+			for(int i = (int)startpos.y ; i > -1 ; i --)
+			{
+				dirs.Add( new Vector2( startpos.x,(float)i) );
+			}
+			break;
+		}
+		
+		for(int i = 1 ; i < dirs.Count ; i++)
+		{
+			JewelObj tmp = JewelSpawner.spawn.JewelGribScript [(int)dirs[i].x, (int)dirs[i].y];
+			if (tmp != null)
+			{
+				if( i < 4 )
+				{
+					int random = Random.Range( 6,8 );
+					Supporter.sp.SpawnJewelPower( tmp.jewel.JewelType, random, tmp.jewel.JewelPosition,true );
+				}
+				else
+				{
+					tmp.Destroy();
+				}
+			}
+		}
+		yield return new WaitForSeconds(1f);
+		GameController.action.dropjewel ();
 	}
 }

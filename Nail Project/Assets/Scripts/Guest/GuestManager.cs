@@ -49,6 +49,8 @@ public class GuestManager : MonoBehaviour {
 		if (_numQueue <= 0)
 			return;
 
+		_numQueue --;
+
 		InitGuest (guest);
 	}
 
@@ -146,12 +148,10 @@ public class GuestManager : MonoBehaviour {
 	
 	public void OnLeaveQueue()
 	{
-		_numQueue --;
 		_totalGuest --;
 		print (_totalGuest);
-		if(_totalGuest <= 1)
+		if(_totalGuest <= 0)
 			Supporter.sp.StartEndgamePhase();
-
 	}
 	
 }

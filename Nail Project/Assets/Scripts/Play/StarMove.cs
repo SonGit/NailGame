@@ -10,13 +10,13 @@ public class StarMove : MonoBehaviour
 
     IEnumerator Start()
     {
-        X = 0;
-        Y = 0;
-        yield return new WaitForSeconds(1f);
-        actived = true;
+        //X = 0;
+        //Y = 0;
+        //yield return new WaitForSeconds(1f);
+        //actived = true;
         yield return new WaitForSeconds(0.75f);
-        GameObject.Find("JewelStar").transform.GetChild(0).gameObject.SetActive(true);
-        Destroy(gameObject);
+        //GameObject.Find("JewelStar").transform.GetChild(0).gameObject.SetActive(true);
+        //Destroy(gameObject);
     }
 
     void Update()

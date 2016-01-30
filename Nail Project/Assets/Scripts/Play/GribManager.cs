@@ -124,7 +124,7 @@ public class GribManager : MonoBehaviour
 	    TextAsset txtass = (TextAsset)Resources.Load ("Maps/" + mapName, typeof(TextAsset));
 	    mapStringdata = txtass.ToString ();
 #endif
-        string[] stringresult = mapStringdata.Split(new char[] { '	', '\n' });
+        string[] stringresult = mapStringdata.Split(new char[] { '	', '\n'});
         int dem = 0;
         for (int y = 8; y >= 0; y--)
             for (int x = 0; x < 7; x++)

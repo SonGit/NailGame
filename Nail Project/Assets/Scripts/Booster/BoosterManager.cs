@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
@@ -98,7 +98,7 @@ public class BoosterManager : MonoBehaviour {
 
 		foreach(Vector2 vect in neighboringLocations)
 		{
-			if(Supporter.sp.CheckValidPosition(vect))
+			if(Supporter.sp.CheckOutOfBounds(vect))
 			{
 				JewelObj tmp = JewelSpawner.spawn.JewelGribScript [ (int)vect.x, (int)vect.y];
 				if (tmp != null) 
