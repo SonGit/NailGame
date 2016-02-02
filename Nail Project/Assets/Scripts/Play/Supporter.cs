@@ -517,4 +517,18 @@ public class Supporter : MonoBehaviour
 		}
 	}
 
+	public void Boom(Vector3 groundZero)
+	{
+		for (int x = 0; x < GameController.WIDTH; x++) {
+			for (int y = 0; y < GameController.HEIGHT; y++) {
+				JewelObj tmp = JewelSpawner.spawn.JewelGribScript [x, y];
+				if (tmp != null && tmp.jewel != null)
+				{
+					tmp.BoomEffect(groundZero);
+				}
+				
+			}
+		}
+	}
+
 }

@@ -396,4 +396,31 @@ public class JewelObj : MonoBehaviour
             transform.GetChild(0).transform.localEulerAngles = new Vector3(0, 0, 0);
         }
     }
+
+	public void BoomEffect(Vector3 groundZero)
+	{
+		StartCoroutine ( Boom(groundZero) );
+	}
+
+	IEnumerator Boom(Vector3 groundZero)
+	{
+		Vector3 oldpos;
+		float distance = Vector3.Distance(groundZero, transform.position);
+		float impact =  1 / (distance / 4); //The further the ground zero, the less impact it have
+		
+		Vector3 dir = groundZero - transform.position;
+		Vector3 destination =  transform.position - (dir.normalized * impact);
+		
+		yield return new WaitForSeconds(0.5f);
+		oldpos = transform.position;
+		iTween.MoveTo(gameObject,iTween.Hash("position",destination,
+		                                     "easetype",iTween.EaseType.easeInOutSine,
+		                                     "time",.8f));
+		
+		yield return new WaitForSeconds(0.8f);
+		
+		iTween.MoveTo(gameObject,iTween.Hash("position",oldpos,
+		                                     "easetype",iTween.EaseType.easeInOutSine,
+		                                     "time",.8f));
+	}
 }

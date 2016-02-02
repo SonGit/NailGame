@@ -245,7 +245,8 @@ public class GameController : MonoBehaviour
 
 			if(NeiObj1.Count == 3 || NeiObj2.Count == 3)
 			{
-				Supporter.sp.SpawnARandomStripe(Jewel1.jewel.JewelType);
+				//Supporter.sp.SpawnARandomStripe(Jewel1.jewel.JewelType);
+				Supporter.sp.Boom( Jewel1.transform.position );
 			}
 
 			//Valid move, so minus a move
