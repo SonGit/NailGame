@@ -51,7 +51,7 @@ public class GribManager : MonoBehaviour
     /// <returns></returns>
     public IEnumerator GribMapCreate(string MapName)
     {
-        GribCell = new GameObject[7, 9];
+        GribCell = new GameObject[GameController.WIDTH, GameController.HEIGHT];
         Map = MapReader(MapName);
         yield return new WaitForEndOfFrame();
         GribCreate(Map);
@@ -71,10 +71,10 @@ public class GribManager : MonoBehaviour
     void GribCreate(int[,] map)
     {
         GameController.action.CellNotEmpty = 0;
-        GribCellObj = new CellObj[7, 9];
-        for (int x = 0; x < 7; x++)
+		GribCellObj = new CellObj[GameController.WIDTH, GameController.HEIGHT];
+		for (int x = 0; x < GameController.WIDTH; x++)
         {
-            for (int y = 0 ; y< 9; y++)
+			for (int y = 0 ; y< GameController.HEIGHT; y++)
             {
                 if (map[x, y] > 1)
                     GameController.action.CellNotEmpty++;
@@ -227,9 +227,9 @@ public class GribManager : MonoBehaviour
     #region boder create
     void BorderCreate(int[,] map)
     {
-        for (int x = 0; x < 7; x++)
+        for (int x = 0; x < GameController.WIDTH; x++)
         {
-            for (int y = 0; y < 9; y++)
+			for (int y = 0; y < GameController.HEIGHT; y++)
             {
                 int i = map[x, y];
                 if (i >0)
@@ -277,9 +277,9 @@ public class GribManager : MonoBehaviour
 
     bool top(int x, int y)
     {
-        if (y == 8)
+        if (y == GameController.HEIGHT - 1)
             return true;
-        else if (y + 1 <= 8 && Map[x, y+1] == 0)
+		else if (y + 1 <= GameController.HEIGHT - 1 && Map[x, y+1] == 0)
             return true;
 
         return false;

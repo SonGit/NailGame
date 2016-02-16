@@ -28,11 +28,13 @@ public class GuestPlaceholder : MonoBehaviour {
 
 	public bool _isActive;
 
+	public int _numOrder; //order of appearing
+
 	void Start () {
 		_guestManager = this.GetComponentInParent<GuestManager>();
 	}
 	
-	public void Init(GuestType guestType,int jewelType,int quantity )
+	public void Init(GuestType guestType,int jewelType,int quantity,int numQueue )
 	{
 		GuestUI_Jewel ();
 
@@ -41,6 +43,7 @@ public class GuestPlaceholder : MonoBehaviour {
 		_requiredQuantity = quantity;
 		_readyToTakeOrder = false;
 		_isActive = true;
+		_numOrder = numQueue;
 
 		_guestSprite.sprite = ResourcesMgr.GetSprite ( GetGuestSpriteName(guestType) );
 		_jewelSprite.sprite = JewelSpawner.spawn.GetJewelSprite (jewelType);
@@ -63,12 +66,13 @@ public class GuestPlaceholder : MonoBehaviour {
 		_isActive = true;
 	}
 
-	public void Init(GuestType guestType,ItemType itemType)
+	public void Init(GuestType guestType,ItemType itemType,int numQueue)
 	{
 		GuestUI_Item ();
 
 		_type = guestType;
 		_requiredItem = itemType;
+		_numOrder = numQueue;
 		_guestSprite.sprite = ResourcesMgr.GetSprite ( GetGuestSpriteName(guestType) );
 
 		anim.Play("GuestMoveIn");

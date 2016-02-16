@@ -56,19 +56,19 @@ public class JewelSpawner : MonoBehaviour
 
     public void JewelMapCreate(int[,] Map)
     {
-        JewelGrib = new GameObject[7, 9];
+		JewelGrib = new GameObject[GameController.WIDTH, GameController.HEIGHT];
 
-        JewelGribScript = new JewelObj[7, 9];
+		JewelGribScript = new JewelObj[GameController.WIDTH, GameController.HEIGHT];
 
-        for (int x = 0; x < 7; x++)
+		for (int x = 0; x < GameController.WIDTH; x++)
         {
             int s = 0;
-            for (int y = 0; y < 9; y++)
+			for (int y = 0; y < GameController.HEIGHT; y++)
             {
                 if (GribManager.cell.GribCellObj[x, y] != null && GribManager.cell.GribCellObj[x, y].cell.CellEffect == 4)
                     s = y;
             }
-            for (int y = s; y < 9; y++)
+			for (int y = s; y < GameController.HEIGHT; y++)
             {
                 if (Map[x, y] > 0)
                 {
@@ -85,15 +85,15 @@ public class JewelSpawner : MonoBehaviour
     }
     void RemakeGrib()
     {
-        for (int x = 0; x < 7; x++)
-            for (int y = 0; y < 9; y++)
+        for (int x = 0; x < GameController.WIDTH; x++)
+			for (int y = 0; y < GameController.HEIGHT; y++)
                 if (JewelGrib[x, y] != null && JewelGribScript[x, y] != GameController.action.JewelStar)
                 {
                     Destroy(JewelGrib[x, y]);
                     JewelGribScript[x, y] = null;
                 }
 
-        for (int i = 0; i < 7; i++)
+		for (int i = 0; i < GameController.WIDTH; i++)
         {
             for (int j = 0; j < prespawnlist[i].Count; j++)
             {
@@ -110,15 +110,15 @@ public class JewelSpawner : MonoBehaviour
     loop:
         RemakeGrib();
 
-        for (int x = 0; x < 7; x++)
+		for (int x = 0; x < GameController.WIDTH; x++)
         {
             int s = 0;
-            for (int y = 0; y < 9; y++)
+			for (int y = 0; y < GameController.HEIGHT; y++)
             {
                 if (GribManager.cell.GribCellObj[x, y] != null && GribManager.cell.GribCellObj[x, y].cell.CellEffect == 4)
                     s = y;
             }
-            for (int y = s; y < 9; y++)
+			for (int y = s; y < GameController.HEIGHT; y++)
             {
                 if (GribManager.cell.Map[x, y] > 0 && JewelGribScript[x, y] == null)
                 {
@@ -143,15 +143,15 @@ public class JewelSpawner : MonoBehaviour
 	loop:
 			RemakeGrib();
 		
-		for (int x = 0; x < 7; x++)
+		for (int x = 0; x < GameController.WIDTH; x++)
 		{
 			int s = 0;
-			for (int y = 0; y < 9; y++)
+			for (int y = 0; y < GameController.HEIGHT; y++)
 			{
 				if (GribManager.cell.GribCellObj[x, y] != null && GribManager.cell.GribCellObj[x, y].cell.CellEffect == 4)
 					s = y;
 			}
-			for (int y = s; y < 9; y++)
+			for (int y = s; y < GameController.HEIGHT; y++)
 			{
 				if (GribManager.cell.Map[x, y] > 0 && JewelGribScript[x, y] == null)
 				{
@@ -189,9 +189,9 @@ public class JewelSpawner : MonoBehaviour
 
     public void EnableAllJewel()
     {
-        for (int x = 0; x < 7; x++)
+        for (int x = 0; x < GameController.WIDTH; x++)
         {
-            for (int y = 0; y < 9; y++)
+			for (int y = 0; y < GameController.HEIGHT; y++)
             {
                 if (JewelGribScript[x, y] != null && JewelGribScript[x, y] != GameController.action.JewelStar)
                     JewelGribScript[x, y].JewelEnable();

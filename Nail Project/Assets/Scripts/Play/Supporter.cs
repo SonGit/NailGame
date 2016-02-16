@@ -483,7 +483,6 @@ public class Supporter : MonoBehaviour
 						count ++;
 					}
 				}
-				
 			}
 		}
 
@@ -501,13 +500,13 @@ public class Supporter : MonoBehaviour
 					switch(rand)
 					{
 					case 0:
-						Supporter.sp.SpawnJewelPower (jewelType, (int)GameController.Power.STRIPED_HORIZONTAL , tmp.jewel.JewelPosition ,true);
+						Supporter.sp.SpawnJewelPower (jewelType, (int)GameController.Power.STRIPED_HORIZONTAL , tmp.jewel.JewelPosition ,false);
 						break;
 					case 1:
-						Supporter.sp.SpawnJewelPower (jewelType, (int)GameController.Power.STRIPED_VERTICAL , tmp.jewel.JewelPosition ,true);
+						Supporter.sp.SpawnJewelPower (jewelType, (int)GameController.Power.STRIPED_VERTICAL , tmp.jewel.JewelPosition ,false);
 						break;
 					default:
-						Supporter.sp.SpawnJewelPower (jewelType, (int)GameController.Power.STRIPED_VERTICAL , tmp.jewel.JewelPosition ,true);
+						Supporter.sp.SpawnJewelPower (jewelType, (int)GameController.Power.STRIPED_VERTICAL , tmp.jewel.JewelPosition ,false);
 						break;
 					}
 					return;

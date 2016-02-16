@@ -2,6 +2,8 @@
 using System.Collections;
 using System;
 using UnityEngine.UI;
+using System.Collections.Generic;
+using System.Linq;
 
 public class GuestManager : MonoBehaviour {
 	
@@ -24,6 +26,8 @@ public class GuestManager : MonoBehaviour {
 		}
 	}
 
+	int _currentOrderNo;
+
 	void Awake()
 	{
 
@@ -31,6 +35,7 @@ public class GuestManager : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
+		_currentOrderNo = 0;
 		_numQueue = 2;
 		_totalGuest = _numQueue + 3; //total = guest on the bar + queued guest
 		InitGuests ();
@@ -58,31 +63,42 @@ public class GuestManager : MonoBehaviour {
 	{
 		int rand = UnityEngine.Random.Range (0,2);
 		//if(rand == 0)
-			guest.Init( GetRandomizedGuestType(), GetRandomizedJewelType(), GetRamdomizedQuantity() );
+		guest.Init( GetRandomizedGuestType(), GetRandomizedJewelType(), GetRamdomizedQuantity(),_currentOrderNo ++ );
 		//else
 			//guest.Init( GetRandomizedGuestType(), GetRandomizedItemType() );
 	}
 	
 	public GuestPlaceholder GetGuestThatNeedJewel(int jewelType)
 	{
+		List<GuestPlaceholder> guestList = new List<GuestPlaceholder>();
 		foreach (GuestPlaceholder guest in _guests) {
 			if(guest._requiredJewel == jewelType && guest._readyToTakeOrder)
 			{
-				return guest;
+				guestList.Add(guest);
 			}
 		}
-		return null;
+
+		if (guestList.Count == 0)
+			return null;
+		else 
+			return GetPrioritizedGuest (guestList);
 	}
 
 	public GuestPlaceholder GetGuestThatNeedItem(ItemType itemType)
 	{
+		List<GuestPlaceholder> guestList = new List<GuestPlaceholder>();
+
 		foreach (GuestPlaceholder guest in _guests) {
 			if(guest._requiredItem == itemType && guest._readyToTakeOrder)
 			{
-				return guest;
+				guestList.Add(guest);
 			}
 		}
-		return null;
+
+		if (guestList.Count == 0)
+			return null;
+		else 
+			return GetPrioritizedGuest (guestList);
 	}
 
 	public void GiveItemToFirstFoundGuest()
@@ -96,15 +112,18 @@ public class GuestManager : MonoBehaviour {
 		}
 	}
 
-	public void FillGuest(int itemType,int score)
+	public void FillGuest(int jewelType,int score)
 	{
-		foreach (GuestPlaceholder guest in _guests) {
-			if(guest._requiredJewel == itemType && guest._readyToTakeOrder)
-			{
-				guest.Fill(score);
-				return;
-			}
-		}
+		var guestFound = GetGuestThatNeedJewel (jewelType);
+		if (guestFound != null)
+			guestFound.Fill (score);
+	}
+
+	GuestPlaceholder GetPrioritizedGuest(List<GuestPlaceholder> guestList)
+	{
+		//Old guests has priority over recently added guest
+		guestList = guestList.OrderBy (v => v._numOrder).ToList();
+		return guestList [0];
 	}
 
 	public void GiveItemToGuest(BasePowerItem item)
@@ -149,7 +168,7 @@ public class GuestManager : MonoBehaviour {
 	public void OnLeaveQueue()
 	{
 		_totalGuest --;
-		print (_totalGuest);
+
 		if(_totalGuest <= 0)
 			Supporter.sp.StartEndgamePhase();
 	}

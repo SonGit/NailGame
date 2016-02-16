@@ -178,6 +178,7 @@ public class ComboManager : MonoBehaviour {
 	IEnumerator ComboWrapped_Wrapped(Vector2 centerPos)
 	{
 		Vector2[] directions = Supporter.sp.GetAdjacentVectors_x2 (centerPos);
+		JewelObj centerPosJewelObj = JewelSpawner.spawn.JewelGribScript [(int)centerPos.x, (int)centerPos.y];
 		
 		foreach (Vector2 direction in directions) {
 			if ( Supporter.sp.CheckOutOfBounds(direction) )
@@ -188,7 +189,8 @@ public class ComboManager : MonoBehaviour {
 				}
 			}
 		}
-		yield return new WaitForSeconds(0.5f);
+		Supporter.sp.Boom (centerPosJewelObj.transform.position);
+		yield return new WaitForSeconds(3f);
 		GameController.action.dropjewel ();
 	}
 

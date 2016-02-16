@@ -250,7 +250,7 @@ public class JewelObj : MonoBehaviour
     List<JewelObj> GetRight(Vector2 Pos, int type)
     {
         List<JewelObj> tmp = new List<JewelObj>();
-        for (int x = (int)Pos.x + 1; x < 7; x++)
+		for (int x = (int)Pos.x + 1; x < GameController.WIDTH; x++)
         {
             if (x != jewel.JewelPosition.x && JewelSpawner.spawn.JewelGribScript[x, (int)Pos.y] != null && JewelSpawner.spawn.JewelGribScript[x, (int)Pos.y].jewel.JewelType == type && GribManager.cell.GribCellObj[x, (int)Pos.y].cell.CellEffect == 0)
                 tmp.Add(JewelSpawner.spawn.JewelGribScript[x, (int)Pos.y]);
@@ -263,7 +263,7 @@ public class JewelObj : MonoBehaviour
     List<JewelObj> GetTop(Vector2 Pos, int type)
     {
         List<JewelObj> tmp = new List<JewelObj>();
-        for (int y = (int)Pos.y + 1; y < 9; y++)
+        for (int y = (int)Pos.y + 1; y < GameController.HEIGHT; y++)
         {
             if (y != jewel.JewelPosition.y && JewelSpawner.spawn.JewelGribScript[(int)Pos.x, y] != null && JewelSpawner.spawn.JewelGribScript[(int)Pos.x, y].jewel.JewelType == type && GribManager.cell.GribCellObj[(int)Pos.x, y].cell.CellEffect == 0)
                 tmp.Add(JewelSpawner.spawn.JewelGribScript[(int)Pos.x, y]);

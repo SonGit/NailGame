@@ -14,7 +14,7 @@ public class GameController : MonoBehaviour
 	public static float TIMEOUT = 1.5f;
 
 	public static int WIDTH = 7;
-	public static int HEIGHT = 9;
+	public static int HEIGHT = 7;
 
 
     public int GameState;
@@ -230,10 +230,10 @@ public class GameController : MonoBehaviour
 
         if (NeiObj1.Count >= 3 || NeiObj2.Count >= 3 || Jewel1.jewel.JewelType == 8 || Jewel2.jewel.JewelType == 8)
         {
-            Ulti.MoveTo(obj1, obj2.transform.localPosition, 0.2f);
-            Ulti.MoveTo(obj2, obj1.transform.localPosition, 0.2f);
-            SwapJewelPosition(obj1, obj2);
-            JewelProcess(NeiObj1, NeiObj2, obj1, obj2);
+			Ulti.MoveTo(obj1, obj2.transform.localPosition, 0.2f);
+			Ulti.MoveTo(obj2, obj1.transform.localPosition, 0.2f);
+			SwapJewelPosition(obj1, obj2);
+			JewelProcess(NeiObj1, NeiObj2, obj1, obj2);
 
 			if (Jewel1.jewel.JewelPower == (int)GameController.Power.LUCKY) {
 				GameController.action._guestManager.GiveItemToFirstFoundGuest ();
@@ -245,8 +245,7 @@ public class GameController : MonoBehaviour
 
 			if(NeiObj1.Count == 3 || NeiObj2.Count == 3)
 			{
-				//Supporter.sp.SpawnARandomStripe(Jewel1.jewel.JewelType);
-				Supporter.sp.Boom( Jewel1.transform.position );
+				Supporter.sp.SpawnARandomStripe(Jewel1.jewel.JewelType);
 			}
 
 			//Valid move, so minus a move
@@ -461,13 +460,13 @@ public class GameController : MonoBehaviour
         if (x - 1 >= 0 && GribManager.cell.GribCellObj[x - 1, y] != null)
             GribManager.cell.GribCellObj[x - 1, y].RemoveEffect();
 
-        if (x + 1 < 7 && GribManager.cell.GribCellObj[x + 1, y] != null)
+        if (x + 1 < GameController.WIDTH && GribManager.cell.GribCellObj[x + 1, y] != null)
             GribManager.cell.GribCellObj[x + 1, y].RemoveEffect();
 
         if (y - 1 >= 0 && GribManager.cell.GribCellObj[x, y - 1] != null)
             GribManager.cell.GribCellObj[x, y - 1].RemoveEffect();
 
-        if (y + 1 < 9 && GribManager.cell.GribCellObj[x, y + 1] != null)
+		if (y + 1 < GameController.HEIGHT && GribManager.cell.GribCellObj[x, y + 1] != null)
             GribManager.cell.GribCellObj[x, y + 1].RemoveEffect();
 
 
@@ -504,7 +503,7 @@ public class GameController : MonoBehaviour
         SoundController.Sound.Fire();
         List<CellObj> celleffect = new List<CellObj>();
         List<JewelObj> jeweldes = new List<JewelObj>();
-        for (int y = 0; y < 9; y++)
+        for (int y = 0; y < GameController.HEIGHT; y++)
         {
             if (_y != y)
             {
@@ -530,7 +529,7 @@ public class GameController : MonoBehaviour
             for (int j = y - 1; j <= y + 1; j++)
             {
                 if (i != x || j != y)
-                    if (i >= 0 && i < 7 && j >= 0 && j < 9 && JewelSpawner.spawn.JewelGribScript[i, j] != null && JewelSpawner.spawn.JewelGribScript[i, j].jewel.JewelType != 99)
+				if (i >= 0 && i < GameController.WIDTH && j >= 0 && j < GameController.HEIGHT && JewelSpawner.spawn.JewelGribScript[i, j] != null && JewelSpawner.spawn.JewelGribScript[i, j].jewel.JewelType != 99)
                         JewelSpawner.spawn.JewelGribScript[i, j].Destroy();
             }
     }
@@ -544,9 +543,9 @@ public class GameController : MonoBehaviour
     {
         NoSelect.SetActive(true);
         dropjewel();
-        for (int x = 0; x < 7; x++)
+		for (int x = 0; x < GameController.WIDTH; x++)
         {
-            for (int y = 0; y < 9; y++)
+			for (int y = 0; y < GameController.HEIGHT; y++)
             {
                 JewelObj tmp = JewelSpawner.spawn.JewelGribScript[x, y];
                 if (tmp != null && tmp.jewel.JewelType == type)
@@ -603,9 +602,9 @@ public class GameController : MonoBehaviour
     private List<CellObj> getListCellEffect()
     {
         List<CellObj> tmp = new List<CellObj>();
-        for (int y = 0; y < 9; y++)
+        for (int y = 0; y < GameController.HEIGHT; y++)
         {
-            for (int x = 0; x < 7; x++)
+			for (int x = 0; x < GameController.WIDTH; x++)
             {
                 if (GribManager.cell.GribCellObj[x, y] != null && GribManager.cell.GribCellObj[x, y].cell.CellEffect > 0)
                 {
@@ -618,9 +617,9 @@ public class GameController : MonoBehaviour
     private List<CellObj> getListNotEmpty()
     {
         List<CellObj> tmp = new List<CellObj>();
-        for (int y = 0; y < 9; y++)
+		for (int y = 0; y < GameController.HEIGHT; y++)
         {
-            for (int x = 0; x < 7; x++)
+			for (int x = 0; x < GameController.WIDTH; x++)
             {
                 if (GribManager.cell.GribCellObj[x, y] != null && GribManager.cell.GribCellObj[x, y].cell.CellType > 1)
                 {
@@ -687,14 +686,15 @@ public class GameController : MonoBehaviour
 
     public void AddBonusPower()
     {
+		return;
         int dem = 0;
         while (true)
         {
             dem++;
             if (dem >= 63)
                 return;
-            int x = Random.Range(0, 7);
-            int y = Random.Range(0, 9);
+			int x = Random.Range(0, GameController.WIDTH);
+			int y = Random.Range(0, GameController.HEIGHT);
             JewelObj tmp = JewelSpawner.spawn.JewelGribScript[x, y];
             if (tmp != null && tmp.jewel.JewelType != 8 && tmp.jewel.JewelPower == 0 && GribManager.cell.GribCellObj[x, y].cell.CellEffect == 0)
             {
@@ -712,7 +712,7 @@ public class GameController : MonoBehaviour
         Vector2 pos;
         for (int y = 9 - 1; y >= 0; y--)
         {
-            for (int x = 0; x < 7; x++)
+			for (int x = 0; x < GameController.WIDTH; x++)
             {
                 if (GribManager.cell.GribCellObj[x, y] != null)
                     listpos.Add(new Vector2(x, y));
@@ -728,7 +728,7 @@ public class GameController : MonoBehaviour
     public void WinChecker()
     {
         int Min = 0;
-        for (int y = 0; y < 9; y++)
+		for (int y = 0; y < GameController.HEIGHT; y++)
         {
             if (GribManager.cell.GribCellObj[(int)JewelStar.jewel.JewelPosition.x, y] != null)
             {

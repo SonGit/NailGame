@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using Facebook.Unity;
+using System.Collections.Generic;
 
 public class Home : MonoBehaviour
 {
@@ -11,6 +13,27 @@ public class Home : MonoBehaviour
         MusicController.Music.BG_menu();
 		ResourcesMgr.Init ();
     }
+
+	public void TestFacebook()
+	{
+		FB.Init(this.OnInitFB);
+	}
+
+	void OnInitFB()
+	{
+		FB.LogInWithReadPermissions(new List<string>() { "public_profile", "email", "user_friends" }, this.HandleResult);
+	}
+
+	protected void HandleResult(IResult result)
+	{
+		if (result == null)
+		{
+			print ("nyll");
+			return;
+		}
+
+		print (result.RawResult);
+	}
 
     void Update()
     {

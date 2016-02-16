@@ -27,9 +27,9 @@ public class SpawnController : MonoBehaviour
 
     void Drop()
     {
-        for (int y = 0; y < 9; y++)
+		for (int y = 0; y < GameController.HEIGHT; y++)
         {
-            for (int x = 0; x < 7; x++)
+			for (int x = 0; x < GameController.WIDTH; x++)
             {
                 if (JewelSpawner.spawn.JewelGribScript[x, y] != null && GribManager.cell.GribCellObj[x, y].cell.CellEffect != 4)
 					JewelSpawner.spawn.JewelGribScript[x, y].getNewPosition();
@@ -39,16 +39,16 @@ public class SpawnController : MonoBehaviour
 
     void Spawn()
     {
-        int[] h = new int[7];
-        for (int x = 0; x < 7; x++)
+		int[] h = new int[GameController.WIDTH];
+		for (int x = 0; x < GameController.WIDTH; x++)
         {
             int s = 0;
-            for (int y = 0; y < 9; y++)
+			for (int y = 0; y < GameController.HEIGHT; y++)
             {
                 if (GribManager.cell.GribCellObj[x, y] != null && GribManager.cell.GribCellObj[x, y].cell.CellEffect == 4)
                     s = y + 1;
             }
-            for (int y = s; y < 9; y++)
+			for (int y = s; y < GameController.HEIGHT; y++)
             {
                 if (GameController.action.GameState == (int)Timer.GameState.PLAYING)
                     if (GribManager.cell.GribCellObj[x, y] != null && JewelSpawner.spawn.JewelGribScript[x, y] == null)
@@ -96,9 +96,9 @@ public class SpawnController : MonoBehaviour
     IEnumerator ReSpawnGrib()
     {
         Timer.timer.Nomove.SetActive(true);
-        for (int x = 0; x < 7; x++)
+		for (int x = 0; x < GameController.WIDTH; x++)
         {
-            for (int y = 0; y < 9; y++)
+			for (int y = 0; y < GameController.HEIGHT; y++)
             {
                 if (JewelSpawner.spawn.JewelGribScript[x, y] != null && JewelSpawner.spawn.JewelGribScript[x, y].jewel.JewelType != 99)
                     JewelSpawner.spawn.JewelGribScript[x, y].JewelDisable();
@@ -121,11 +121,11 @@ public class SpawnController : MonoBehaviour
     /// </summary>
     void ShowStar()
     {
-        if (GameController.action.isShowStar)
-        {
-            GameController.action.isShowStar = false;
-            GameController.action.ShowStar();
-            GameController.action.isStar = true;
-        }
+        //if (GameController.action.isShowStar)
+        //{
+            //GameController.action.isShowStar = false;
+            //GameController.action.ShowStar();
+            //GameController.action.isStar = true;
+        //}
     }
 }
