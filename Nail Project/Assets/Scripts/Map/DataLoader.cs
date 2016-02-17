@@ -203,17 +203,7 @@ public class DataLoader : MonoBehaviour
 
 		for (int i = 0; i < numFriends; i ++) {
 			friendObjs [i] = (GameObject)Instantiate (FriendPrefab);
-			friendObjs [i].transform.parent = CanvasObj.transform;
-			friendObjs [i].transform.localScale = Vector3.one;
-			
-			Vector2 pos = listmap [friendProgress [i]].transform.position;  // get the game object position
-			Vector2 viewportPoint = Camera.main.WorldToViewportPoint (pos);  //convert game object position to VievportPoint
-			
-			// set MIN and MAX Anchor values(positions) to the same position (ViewportPoint)
-			RectTransform rectTransform = friendObjs [i].GetComponent<RectTransform> ();
-			rectTransform.anchorMin = viewportPoint;  
-			rectTransform.anchorMax = viewportPoint;
-			// Link up
+			friendObjs [i].transform.position = listmap [friendProgress [i]].transform.position + new Vector3(0, 0.6f, -0.2f);
 			listmap [friendProgress [i]].GetComponent<Map>().FriendItem = friendObjs [i];
 
 			if( friendProgress [i] == PlayerUtils.CurrentLevel)
@@ -233,7 +223,7 @@ public class DataLoader : MonoBehaviour
 			object friend_id = scoreData["id"];
 			
 			if(index < numFriends)
-				StartCoroutine( UserImage( (string)friend_id,friendObjs[index].transform.GetChild(0).GetComponent<RawImage>() ) );
+				StartCoroutine( UserImage( (string)friend_id, friendObjs[index].GetComponent<MeshRenderer>() ) );
 			else
 				return;
 
@@ -241,13 +231,14 @@ public class DataLoader : MonoBehaviour
 		}
 	}
 
-	IEnumerator UserImage(string id,RawImage image)
+	IEnumerator UserImage(string id,MeshRenderer image)
 	{
 		WWW url = new WWW("https" + "://graph.facebook.com/" + id + "/picture?type=large"); 
 		Texture2D textFb2 = new Texture2D(128, 128, TextureFormat.DXT1, false); //TextureFormat must be DXT5
 		yield return url;
 		url.LoadImageIntoTexture(textFb2);
-		image.texture = textFb2;
+		image.material.mainTexture = textFb2;
+		image.material.shader = Shader.Find ("Unlit/Texture");
 	}
 
 	public void ActivateMapFriends()
