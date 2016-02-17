@@ -2,6 +2,9 @@
 using System.Collections;
 using System.IO;
 using System.Collections.Generic;
+using Facebook.Unity;
+using Facebook.MiniJSON;
+using UnityEngine.UI;
 
 public class DataLoader : MonoBehaviour
 {
@@ -34,6 +37,12 @@ public class DataLoader : MonoBehaviour
     public GameObject fade;
 
     public Sprite[] MapSprite;
+
+	public GameObject FriendPrefab;
+
+	public GameObject CanvasObj;
+
+	public const int MAX_FRIENDS_TO_DISPLAY_MAP = 3;
 
     bool hold;
 
@@ -116,7 +125,9 @@ public class DataLoader : MonoBehaviour
             fade.GetComponent<CanvasGroup>().blocksRaycasts = false;
             CameraMovement.mcamera.StarPoint.transform.GetChild(0).GetComponent<Animation>().Play("StarPoint");
         }
-    }
+
+		SetFriendProgress ();
+	}
 
 
 
@@ -155,6 +166,97 @@ public class DataLoader : MonoBehaviour
         yield return new WaitForSeconds(STARMOVE_TIME);
         CameraMovement.mcamera.StarPoint.transform.GetChild(0).GetComponent<Animation>().Play("StarPoint");
     }
+
+	GameObject[] friendObjs;
+
+	void SetFriendProgress()
+	{
+		if (!FB.IsLoggedIn) {
+			return;
+		}
+
+		friendObjs = new GameObject[MAX_FRIENDS_TO_DISPLAY_MAP];
+		
+		FB.API ("/me/friends", Facebook.Unity.HttpMethod.GET, FriendsCallback);
+	}
+
+	protected void FriendsCallback(IResult result)
+	{
+		print (result.RawResult);
+		
+		var userReq = Json.Deserialize(result.RawResult) as Dictionary<string,object>; 
+		
+		List<object> friends = (List<object>)(userReq["data"]);
+
+		if (friends.Count == 0)
+			return;
+
+		MakeFriendObjs (MAX_FRIENDS_TO_DISPLAY_MAP);
+
+		LoadFriendProfilePicture(friends, MAX_FRIENDS_TO_DISPLAY_MAP);
+	}
+
+	protected void MakeFriendObjs(int numFriends)
+	{
+		int[] friendProgress = new int[]{0,1,2,3,4}; //test data
+		friendObjs = new GameObject[numFriends];
+
+		for (int i = 0; i < numFriends; i ++) {
+			friendObjs [i] = (GameObject)Instantiate (FriendPrefab);
+			friendObjs [i].transform.parent = CanvasObj.transform;
+			friendObjs [i].transform.localScale = Vector3.one;
+			
+			Vector2 pos = listmap [friendProgress [i]].transform.position;  // get the game object position
+			Vector2 viewportPoint = Camera.main.WorldToViewportPoint (pos);  //convert game object position to VievportPoint
+			
+			// set MIN and MAX Anchor values(positions) to the same position (ViewportPoint)
+			RectTransform rectTransform = friendObjs [i].GetComponent<RectTransform> ();
+			rectTransform.anchorMin = viewportPoint;  
+			rectTransform.anchorMax = viewportPoint;
+			// Link up
+			listmap [friendProgress [i]].GetComponent<Map>().FriendItem = friendObjs [i];
+
+			if( friendProgress [i] == PlayerUtils.CurrentLevel)
+				friendObjs [i].SetActive(false);
+		}
+	}
+
+	protected void LoadFriendProfilePicture(List<object> friends, int numFriends)
+	{
+		int index = 0;
+
+		//Parse JSON and load image URL from it
+		foreach(object friend in friends)
+		{
+			Dictionary<string,object> scoreData = friend as Dictionary<string,object>;
+			
+			object friend_id = scoreData["id"];
+			
+			if(index < numFriends)
+				StartCoroutine( UserImage( (string)friend_id,friendObjs[index].transform.GetChild(0).GetComponent<RawImage>() ) );
+			else
+				return;
+
+			index ++;
+		}
+	}
+
+	IEnumerator UserImage(string id,RawImage image)
+	{
+		WWW url = new WWW("https" + "://graph.facebook.com/" + id + "/picture?type=large"); 
+		Texture2D textFb2 = new Texture2D(128, 128, TextureFormat.DXT1, false); //TextureFormat must be DXT5
+		yield return url;
+		url.LoadImageIntoTexture(textFb2);
+		image.texture = textFb2;
+	}
+
+	public void ActivateMapFriends()
+	{
+		if (friendObjs == null)
+			return;
+		foreach (GameObject friend in friendObjs)
+			friend.SetActive (true);
+	}
 
     #region
     string datadefaut = "False,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,1,True,0,0,1,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,1,True,0,0,1,True,0,0,1,True,0,0,1,True,0,0,1,True,0,0,1,True,0,0,1,True,0,0,1,True,0,0,1,True,0,0,1,True,0,0,1,True,0,0,1,True,0,0,1,True,0,0,1,True,0,0,1,True,0,0,1,True,0,0,1,True,0,0,1,True,0,0,1,True,0,0,1,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,3,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,1,True,0,0,1,True,0,0,1,True,0,0,1,True,0,0,1,True,0,0,1,True,0,0,1,True,0,0,1,True,0,0,1,True,0,0,1,True,0,0,1,True,0,0,1,True,0,0,1,True,0,0,1,True,0,0,1,True,0,0,1,True,0,0,1,True,0,0,1,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,0,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,True,0,0,2,";

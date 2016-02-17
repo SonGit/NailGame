@@ -5,10 +5,10 @@ public class Map : MonoBehaviour
 {
 
     public Player map;
+	public GameObject FriendItem; //FriendItem that points to this map
 
     void OnMouseDown()
     {
-
         CameraMovement.setstate = true;
         CameraMovement.movement = false;
         if (DataLoader.enableclick)
@@ -16,7 +16,7 @@ public class Map : MonoBehaviour
     }
     void OnMouseUp()
     {
-
+		DataLoader.Data.ActivateMapFriends ();
         CameraMovement.setstate = false;
         if (DataLoader.enableclick && !CameraMovement.movement)
         {
@@ -28,6 +28,8 @@ public class Map : MonoBehaviour
             PlayerPrefs.SetFloat("LASTPOSX", transform.position.x);
             CameraMovement.mcamera.StarPoint.transform.position = transform.position + new Vector3(0, 0, -0.2f);
             CameraMovement.mcamera.PopUpShow(map);
+			if (FriendItem != null) 
+				FriendItem.SetActive(false);
         }
         CameraMovement.movement = false;
     }

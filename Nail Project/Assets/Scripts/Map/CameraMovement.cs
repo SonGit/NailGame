@@ -72,7 +72,6 @@ public class CameraMovement : MonoBehaviour
         float x = PlayerPrefs.GetFloat("LASTPOSX", -0.0045f);
         float y = PlayerPrefs.GetFloat("LASTPOS", -3.587f);
         StarPoint.transform.position = new Vector3(x, y, StarPoint.transform.position.z);
-
     }
 
     /// <summary>

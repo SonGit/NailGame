@@ -24,6 +24,7 @@ public class Player
 
 public class PlayerUtils
 {
+	public static int CurrentLevel = 297;
     private string KEY_DATA = "DATA";
     private string data = "";
     private string[] dataSplit;
@@ -50,6 +51,7 @@ public class PlayerUtils
 
         dataSplit = data.Split(',');
 
+		bool once = false;
         for (int i = 0; i < 297; i++)
         {
             p = new Player();
@@ -60,7 +62,15 @@ public class PlayerUtils
             p.HightScore = int.Parse(dataSplit[i * 4 + 2]);
             p.Background = int.Parse(dataSplit[i * 4 + 3]);
 
-			p.Locked = false;
+			if(!once)
+			{
+				if (p.Locked)
+				{
+					CurrentLevel = i -1;
+					once = true;
+				}
+			}
+
             list.Add(p);
         }
 

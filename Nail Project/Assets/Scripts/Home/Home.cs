@@ -2,10 +2,12 @@
 using System.Collections;
 using UnityEngine.UI;
 using Facebook.Unity;
+using Facebook.MiniJSON;
 using System.Collections.Generic;
 
 public class Home : MonoBehaviour
 {
+	public SpriteRenderer test;
     void Start()
     {
         // hidden banner (banner only show on Game Play scene)
@@ -23,6 +25,7 @@ public class Home : MonoBehaviour
 	{
 		FB.LogInWithReadPermissions(new List<string>() { "public_profile", "email", "user_friends" }, this.HandleResult);
 	}
+
 
 	protected void HandleResult(IResult result)
 	{
