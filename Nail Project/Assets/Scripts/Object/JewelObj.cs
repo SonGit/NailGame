@@ -15,7 +15,7 @@ public class JewelObj : MonoBehaviour
 
     public Jewel jewel;
 
-    public SpriteRenderer render;
+	public SkeletonAnimation render;
 
     private const float DELAY = 0.2f;
 
@@ -27,13 +27,51 @@ public class JewelObj : MonoBehaviour
 
 	IEnumerator Start()
 	{
-		yield return new WaitForSeconds (1.5f);
-		//Animation anim = transform.GetChild(0).GetComponent<Animation>();
-		//anim.enabled = true;
+		render =  transform.GetChild(0).GetComponent<SkeletonAnimation>();
+		yield return null;
+	}
 
-		//anim.Blend("MoveBack_Up", 1, 0);
-		//.Blend("MoveBack_Left", 1, 0);
-
+	public void SetSkin(int type)
+	{
+		render =  transform.GetChild(0).GetComponent<SkeletonAnimation>();
+		render.enabled = true;
+		render.skeleton.SetSkin("item1");
+		switch(type)
+		{
+		case 0:
+			render.skeleton.SetSkin("item1");
+			break;
+		case 1:
+			render.skeleton.SetSkin("item2");
+			break;
+		case 2:
+			render.skeleton.SetSkin("item3");
+			break;
+		case 3:
+			render.skeleton.SetSkin("item4");
+			break;
+		case 4:
+			render.skeleton.SetSkin("item5");
+			break;
+		case 5:
+			render.skeleton.SetSkin("item6");
+			break;
+		case 6:
+			render.skeleton.SetSkin("item7");
+			break;
+		case 7:
+			render.skeleton.SetSkin("item8");
+			break;
+		case 8:
+			render.skeleton.SetSkin("item9");
+			break;
+		default:
+			print ("WRONG: " + type);
+			break;
+		}
+		print ("WORK");
+		render.gameObject.transform.localScale = Vector3.one;
+		render.enabled = false;
 	}
 
     //delete jewel
@@ -167,6 +205,7 @@ public class JewelObj : MonoBehaviour
         jewel.JewelPosition = new Vector2(x, newpos);
         JewelSpawner.spawn.JewelGribScript[x, newpos] = this;
         JewelSpawner.spawn.JewelGrib[x, newpos] = this.gameObject;
+
         if (oldpos != newpos)
             StartCoroutine(Ulti.IEDrop(this.gameObject, jewel.JewelPosition, GameController.DROP_SPEED));
     }
@@ -367,34 +406,39 @@ public class JewelObj : MonoBehaviour
 
     public void JewelDisable()
     {
-        Animation anim = render.GetComponent<Animation>();
-        anim.enabled = true;
-        anim.Play("Disable");
+        //Animation anim = render.GetComponent<Animation>();
+        //anim.enabled = true;
+        //anim.Play("Disable");
+		//render.Reset();
+		render.skeleton.SetToSetupPose ();
+		render.state.SetAnimation (0, "disappear", false);
     }
 
     public void JewelEnable()
     {
-        Animation anim = render.GetComponent<Animation>();
-        anim.enabled = true;
-        anim.Play("Enable");
+        //Animation anim = render.GetComponent<Animation>();
+        //anim.enabled = true;
+        //anim.Play("Enable");
+		//render.Reset();
+		//render.skeleton.SetToSetupPose ();
+		render.enabled = true;
+		render.state.SetAnimation (0, "appear", false);
     }
 
     public void JewelSuggesttion()
     {
-        Animation anim = render.GetComponent<Animation>();
-        anim.enabled = true;
-        anim.Play("Suggesttion");
+        //Animation anim = render.GetComponent<Animation>();
+        //anim.enabled = true;
+        //anim.Play("Suggesttion");
+		//render.Reset();
+		render.skeleton.SetToSetupPose ();
+		render.state.SetAnimation (0, "suggest", false);
     }
     public void JewelStopSuggesttion()
     {
-        Animation anim = render.GetComponent<Animation>();
-
-        if (anim.IsPlaying("Suggesttion"))
-        {
-            anim.Stop("Suggesttion");
-            anim.enabled = false;
-            transform.GetChild(0).transform.localEulerAngles = new Vector3(0, 0, 0);
-        }
+		//render.Reset();
+		render.skeleton.SetToSetupPose ();
+		render.state.SetAnimation (0, "idle", false);
     }
 
 	public void BoomEffect(Vector3 groundZero)

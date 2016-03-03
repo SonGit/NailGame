@@ -60,8 +60,9 @@ public class SpawnController : MonoBehaviour
                             tmp.GetComponent<JewelObj>().jewel.JewelPower = 4;
                             EffectSpawner.effect.Clock(tmp);
                         }
-                        tmp.transform.localPosition = new Vector3(tmp.transform.localPosition.x, 10 + h[x]);
+                        tmp.transform.localPosition = new Vector3(x, 10 + h[x]);
                         h[x]++;
+
                         StartCoroutine(Ulti.IEDrop(tmp, new Vector2(x, y), GameController.DROP_SPEED));
                         JewelObj script = tmp.GetComponent<JewelObj>();
                         script.render.enabled = true;

@@ -500,13 +500,13 @@ public class Supporter : MonoBehaviour
 					switch(rand)
 					{
 					case 0:
-						Supporter.sp.SpawnJewelPower (jewelType, (int)GameController.Power.STRIPED_HORIZONTAL , tmp.jewel.JewelPosition ,false);
+						Supporter.sp.SpawnJewelPower (jewelType, (int)GameController.Power.STRIPED_HORIZONTAL , tmp.jewel.JewelPosition ,true);
 						break;
 					case 1:
-						Supporter.sp.SpawnJewelPower (jewelType, (int)GameController.Power.STRIPED_VERTICAL , tmp.jewel.JewelPosition ,false);
+						Supporter.sp.SpawnJewelPower (jewelType, (int)GameController.Power.STRIPED_VERTICAL , tmp.jewel.JewelPosition ,true);
 						break;
 					default:
-						Supporter.sp.SpawnJewelPower (jewelType, (int)GameController.Power.STRIPED_VERTICAL , tmp.jewel.JewelPosition ,false);
+						Supporter.sp.SpawnJewelPower (jewelType, (int)GameController.Power.STRIPED_VERTICAL , tmp.jewel.JewelPosition ,true);
 						break;
 					}
 					return;

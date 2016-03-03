@@ -179,7 +179,7 @@ public class JewelSpawner : MonoBehaviour
 			JewelGribScript[x, y] = JewelScript;
 			
 			
-			JewelScript.render.sprite = JewelSprite[r];
+			JewelScript.SetSkin (r);
 			JewelScript.jewel.JewelPosition = new Vector2(x, y);
 			JewelScript.jewel.JewelType = r;
 			
@@ -214,7 +214,7 @@ public class JewelSpawner : MonoBehaviour
         else
             r = Random.Range(0, 7);
 
-        JewelScript.render.sprite = JewelSprite[r];
+		JewelScript.SetSkin (r);
         JewelScript.jewel.JewelPosition = new Vector2(x, y);
         JewelScript.jewel.JewelType = r;
 
@@ -228,7 +228,7 @@ public class JewelSpawner : MonoBehaviour
         JewelScript = tmp.GetComponent<JewelObj>();
 
         tmp.transform.SetParent(JewelParent.transform, false);
-        JewelScript.render.enabled = true;
+        //JewelScript.render.enabled = true;
         JewelGrib[x, y] = ObjTmp;
         JewelGribScript[x, y] = JewelScript;
 
@@ -238,7 +238,8 @@ public class JewelSpawner : MonoBehaviour
             r = Random.Range(0, 6);
         else
             r = Random.Range(0, 7);
-        JewelScript.render.sprite = JewelSprite[r];
+
+		JewelScript.SetSkin (r);
         JewelScript.jewel.JewelPosition = new Vector2(x, 9);
         JewelScript.jewel.JewelType = r;
         JewelScript.jewel.JewelPower = 0;
@@ -282,7 +283,7 @@ public class JewelSpawner : MonoBehaviour
 
         int r = randomjewel(x, y);
 
-        JewelScript.render.sprite = JewelSprite[r];
+		JewelScript.SetSkin (r);
         JewelScript.jewel.JewelPosition = new Vector2(x, y);
         JewelScript.jewel.JewelType = r;
 
@@ -364,7 +365,6 @@ public class JewelSpawner : MonoBehaviour
 	void JewelObjInitializer(ref GameObject jewelObj,int x, int y,int type,int power)
 	{
 		JewelScript = jewelObj.GetComponent<JewelObj>();
-		JewelScript.render.enabled = true;
 		JewelGrib[x, y] = jewelObj;
 		JewelGribScript[x, y] = JewelScript;
 		JewelScript.jewel.JewelPosition = new Vector2(x, y);
@@ -373,9 +373,17 @@ public class JewelSpawner : MonoBehaviour
 
 		if (type != 8) {
 			if(type >= JewelSprite.Length)
-				JewelScript.render.sprite = JewelSprite[type-1];
+			{
+				JewelScript.SetSkin (type - 1);
+				print ("A");
+			}
+				
 			else
-				JewelScript.render.sprite = JewelSprite[type]; //Have no idea why, had to improvise on the old code
+			{
+				JewelScript.SetSkin (type); //Have no idea why, had to improvise on the old code
+				print ("B" + power);
+			}
+				
 		}
 
 	}
