@@ -12,7 +12,6 @@ public enum Direction
 public class JewelObj : MonoBehaviour
 {
 
-
     public Jewel jewel;
 
 	public SkeletonAnimation render;
@@ -31,47 +30,30 @@ public class JewelObj : MonoBehaviour
 		yield return null;
 	}
 
-	public void SetSkin(int type)
+	public void SetSkin(int type,int power = -1)
 	{
 		render =  transform.GetChild(0).GetComponent<SkeletonAnimation>();
 		render.enabled = true;
-		render.skeleton.SetSkin("item1");
-		switch(type)
-		{
-		case 0:
-			render.skeleton.SetSkin("item1");
-			break;
-		case 1:
-			render.skeleton.SetSkin("item2");
-			break;
-		case 2:
-			render.skeleton.SetSkin("item3");
-			break;
-		case 3:
-			render.skeleton.SetSkin("item4");
-			break;
-		case 4:
-			render.skeleton.SetSkin("item5");
-			break;
-		case 5:
-			render.skeleton.SetSkin("item6");
-			break;
-		case 6:
-			render.skeleton.SetSkin("item7");
-			break;
-		case 7:
-			render.skeleton.SetSkin("item8");
-			break;
-		case 8:
-			render.skeleton.SetSkin("item9");
-			break;
-		default:
-			print ("WRONG: " + type);
-			break;
-		}
-		print ("WORK");
+
+		string skinName = "item" + (type + 1).ToString();
+		if (power != -1)
+			skinName = SetSkin_Power (power,skinName);
+	
+		render.skeleton.SetSkin(skinName);
 		render.gameObject.transform.localScale = Vector3.one;
 		render.enabled = false;
+	}
+
+	string SetSkin_Power(int power,string skinName)
+	{
+		if (power == (int)GameController.Power.STRIPED_VERTICAL)
+			return skinName + "v";
+		if (power == (int)GameController.Power.STRIPED_HORIZONTAL)
+			return skinName + "h";
+		if (power == (int)GameController.Power.MAGIC)
+			return "item8";
+		
+		return skinName;
 	}
 
     //delete jewel
@@ -410,6 +392,8 @@ public class JewelObj : MonoBehaviour
         //anim.enabled = true;
         //anim.Play("Disable");
 		//render.Reset();
+		render =  transform.GetChild(0).GetComponent<SkeletonAnimation>();
+		render.enabled = true;
 		render.skeleton.SetToSetupPose ();
 		render.state.SetAnimation (0, "disappear", false);
     }
@@ -421,6 +405,7 @@ public class JewelObj : MonoBehaviour
         //anim.Play("Enable");
 		//render.Reset();
 		//render.skeleton.SetToSetupPose ();
+		render =  transform.GetChild(0).GetComponent<SkeletonAnimation>();
 		render.enabled = true;
 		render.state.SetAnimation (0, "appear", false);
     }
@@ -431,12 +416,16 @@ public class JewelObj : MonoBehaviour
         //anim.enabled = true;
         //anim.Play("Suggesttion");
 		//render.Reset();
+		render =  transform.GetChild(0).GetComponent<SkeletonAnimation>();
+		render.enabled = true;
 		render.skeleton.SetToSetupPose ();
 		render.state.SetAnimation (0, "suggest", false);
     }
     public void JewelStopSuggesttion()
     {
 		//render.Reset();
+		render =  transform.GetChild(0).GetComponent<SkeletonAnimation>();
+		render.enabled = true;
 		render.skeleton.SetToSetupPose ();
 		render.state.SetAnimation (0, "idle", false);
     }

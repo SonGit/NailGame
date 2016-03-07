@@ -251,9 +251,9 @@ public class Timer : MonoBehaviour
 
     public void DisableJewel(bool b)
     {
-        for (int x = 0; x < 7; x++)
+        for (int x = 0; x < GameController.WIDTH; x++)
         {
-            for (int y = 0; y < 9; y++)
+			for (int y = 0; y < GameController.HEIGHT; y++)
             {
                 if (!b)
                 {

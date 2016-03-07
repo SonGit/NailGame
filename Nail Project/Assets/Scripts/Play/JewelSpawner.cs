@@ -347,19 +347,12 @@ public class JewelSpawner : MonoBehaviour
 		{
 			case 5://Wrapper
 			return (GameObject)Instantiate(Wrapper);
-			case 6://STRIPED_VERTICAL
-			return (GameObject)Instantiate(Striped_v);
-			case 7://STRIPED_HORIZONTAL
-			return (GameObject)Instantiate(Striped_h);
-			case 8://Colour bomb,magic
-			return (GameObject)Instantiate(JewelColor);
 			case 9://Wheel
 			return (GameObject)Instantiate(JewelWheel);
 			case 10://Lucky
 			return (GameObject)Instantiate(Lucky);
-			default:
-			return (GameObject)Instantiate(JewelObject);
 		}
+		return (GameObject)Instantiate(JewelObject);
 	}
 
 	void JewelObjInitializer(ref GameObject jewelObj,int x, int y,int type,int power)
@@ -371,20 +364,7 @@ public class JewelSpawner : MonoBehaviour
 		JewelScript.jewel.JewelType = type;
 		JewelScript.jewel.JewelPower = power;
 
-		if (type != 8) {
-			if(type >= JewelSprite.Length)
-			{
-				JewelScript.SetSkin (type - 1);
-				print ("A");
-			}
-				
-			else
-			{
-				JewelScript.SetSkin (type); //Have no idea why, had to improvise on the old code
-				print ("B" + power);
-			}
-				
-		}
+		JewelScript.SetSkin (type,power); //Have no idea why, had to improvise on the old code
 
 	}
 
