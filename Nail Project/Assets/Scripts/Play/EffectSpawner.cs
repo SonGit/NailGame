@@ -231,6 +231,32 @@ public class EffectSpawner : MonoBehaviour
         Destroy(tmp, BOOM_TIME);
     }
 
+	public void StripedEffect(Vector3 pos,int jewelType ,bool vertical = false)
+	{
+		GameObject tmp = ObjectPool.instance.GetStripedEffectObj ();
+		tmp.transform.position = pos;
+		if (!vertical)
+			tmp.transform.eulerAngles = new Vector3 (0, 0, 90);
+		else
+			tmp.transform.eulerAngles = Vector3.zero;
+		SkeletonAnimation render =  tmp.transform.GetComponent<SkeletonAnimation>();
+		string skinName = "item" + (jewelType + 1).ToString();
+		render.skeleton.SetSkin(skinName);
+		render.skeleton.SetToSetupPose ();
+		render.state.SetAnimation(0, "StripedCandy", false);
+	}
+
+	public void WrapperEffect(Vector3 pos,int jewelType)
+	{
+		GameObject tmp = ObjectPool.instance.GetWrapperEffectObj ();
+		tmp.transform.position = pos;
+		SkeletonAnimation render =  tmp.transform.GetComponent<SkeletonAnimation>();
+		string skinName = "item" + (jewelType + 1).ToString();
+		render.skeleton.SetSkin(skinName);
+		render.skeleton.SetToSetupPose ();
+		render.state.SetAnimation(0, "WrappedCandy", false);
+	}
+
     public void Enchant(GameObject obj)
     {
         GameObject tmp = (GameObject)Instantiate(EffectPrefabs[2]);
@@ -388,7 +414,8 @@ public class EffectSpawner : MonoBehaviour
 	public void MiniStar(Vector3 startpos,Vector3 endpos)
 	{
 		GameObject tmp = (GameObject)Instantiate(EffectPrefabs[12]);
-		tmp.transform.SetParent(parent.transform, false);
+		//tmp.transform.SetParent(parent.transform, false);
+		print ("endpos  " + endpos);
 		Ulti.MoveTo(tmp, startpos, endpos, 1.2f, -2.2f);
 		Destroy(tmp, 1.2f);
 	}

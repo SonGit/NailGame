@@ -62,7 +62,7 @@ public class BoosterManager : MonoBehaviour {
 
 		case 3:
 			btnObj.AddComponent<BoosterWheel>();
-			label.text = "WHEEL";
+			label.text = "WRAPPER";
 			break;
 
 		case 4:

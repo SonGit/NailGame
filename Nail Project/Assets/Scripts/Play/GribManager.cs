@@ -88,9 +88,9 @@ public class GribManager : MonoBehaviour
 
     void EffectCrash(int[,] map)
     {
-        for (int x = 0; x < 7; x++)
+		for (int x = 0; x < GameController.WIDTH; x++)
         {
-            for (int y = 0; y < 9; y++)
+			for (int y = 0; y < GameController.HEIGHT; y++)
             {
                 if (map[x, y] > 0)
                 EffectSpawner.effect.JewelCrashArray[x, y] = EffectSpawner.effect.JewelCash(new Vector3(x, y));
@@ -115,7 +115,7 @@ public class GribManager : MonoBehaviour
 
     int[,] MapReader(string mapName)
     {
-        int[,] tmp = new int[7, 9];
+		int[,] tmp = new int[GameController.WIDTH, GameController.HEIGHT];
         string mapStringdata = "";
         //read string from text file
 #if UNITY_EDITOR
@@ -126,8 +126,8 @@ public class GribManager : MonoBehaviour
 #endif
         string[] stringresult = mapStringdata.Split(new char[] { '	', '\n'});
         int dem = 0;
-        for (int y = 8; y >= 0; y--)
-            for (int x = 0; x < 7; x++)
+		for (int y = GameController.HEIGHT - 1; y >= 0; y--)
+			for (int x = 0; x < GameController.WIDTH; x++)
             {
                 tmp[x, y] = int.Parse(stringresult[dem]);
                 dem++;
@@ -287,7 +287,7 @@ public class GribManager : MonoBehaviour
 
     bool topleft(int x, int y)
     {
-        if (x - 1 < 0 || y + 1 > 8)
+		if (x - 1 < 0 || y + 1 > GameController.HEIGHT - 1)
             return true;
         else if (x - 1 >= 0 && y + 1 <= 8 &&  Map[x - 1, y + 1] == 0)
             return true;
@@ -298,9 +298,9 @@ public class GribManager : MonoBehaviour
     bool topright(int x, int y)
     {
 
-            if (x + 1 > 6 || y + 1 > 8)
+		if (x + 1 > GameController.WIDTH - 1 || y + 1 > GameController.HEIGHT - 1)
                 return true;
-            else if (x + 1 <= 6 && y + 1 <= 8 && Map[x + 1, y + 1] == 0)
+		else if (x + 1 <= GameController.WIDTH - 1 && y + 1 <= GameController.HEIGHT - 1 && Map[x + 1, y + 1] == 0)
                 return true;
 
         return false;
@@ -318,9 +318,9 @@ public class GribManager : MonoBehaviour
 
     bool botright(int x, int y)
     {
-        if (x + 1 > 6 || y - 1 < 0)
+		if (x + 1 > GameController.WIDTH - 1  || y - 1 < 0)
             return true;
-        else if (x + 1 <=6 && y - 1 >= 0 && Map[x + 1, y - 1] == 0)
+		else if (x + 1 <=GameController.WIDTH - 1  && y - 1 >= 0 && Map[x + 1, y - 1] == 0)
             return true;
 
         return false;
@@ -410,21 +410,23 @@ public class GribManager : MonoBehaviour
             ObjTmp.transform.SetParent(BorderParent.transform, false);
             ObjTmp.transform.localPosition += new Vector3(x-1, y-1);
         }
-        if (x - 1 >= 0 && y + 1 < 9 && map[x - 1, y] > 0 && map[x, y + 1] > 0)
+		if (x - 1 >= 0 && y + 1 < GameController.HEIGHT && map[x - 1, y] > 0 && map[x, y + 1] > 0)
         {
 
             ObjTmp = (GameObject)Instantiate(corner[4]);
             ObjTmp.transform.SetParent(BorderParent.transform, false);
             ObjTmp.transform.localPosition += new Vector3(x - 1 , y);
         }
-        if (x + 1 < 7 && y - 1 >= 0 && map[x + 1, y] > 0 && map[x, y - 1] > 0)
+		if (x + 1 < GameController.HEIGHT && y - 1 >= 0 && map[x + 1, y] > 0 && map[x, y - 1] > 0)
         {
 
             ObjTmp = (GameObject)Instantiate(corner[7]);
             ObjTmp.transform.SetParent(BorderParent.transform, false);
             ObjTmp.transform.localPosition += new Vector3(x, y - 1);
         }
-        if (x + 1 < 7 && y + 1 < 9 && map[x + 1, y] > 0 && map[x, y + 1] > 0)
+
+       // if (x + 1 < 7 && y + 1 < 9 && map[x + 1, y] > 0 && map[x, y + 1] > 0)
+		if (x + 1 < 7 && y + 1 < 7 && map[x + 1, y] > 0 && map[x, y + 1] > 0)
         {
 
             ObjTmp = (GameObject)Instantiate(corner[5]);

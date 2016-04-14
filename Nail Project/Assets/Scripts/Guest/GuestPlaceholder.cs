@@ -14,13 +14,15 @@ public class GuestPlaceholder : MonoBehaviour {
 
 	public ItemType _requiredItem;
 	
-	public SpriteRenderer _jewelSprite;
+	public Image _jewelSprite;
 
-	public SpriteRenderer _itemSprite;
+	public Image _itemSprite;
 
 	public Text _quantityLabel;
 
 	public SpriteRenderer _guestSprite;
+
+	public Image _ballonSprite;
 
 	private GuestManager _guestManager;
 
@@ -45,23 +47,33 @@ public class GuestPlaceholder : MonoBehaviour {
 		_isActive = true;
 		_numOrder = numQueue;
 
-		_guestSprite.sprite = ResourcesMgr.GetSprite ( GetGuestSpriteName(guestType) );
-		_jewelSprite.sprite = JewelSpawner.spawn.GetJewelSprite (jewelType);
+		//_guestSprite.sprite = ResourcesMgr.GetSprite ( GetGuestSpriteName(guestType) );
+		_jewelSprite.sprite = Resources.Load<Sprite>( GetJewelSpriteName() );
 		_quantityLabel.text = quantity.ToString ();
 
 		_requiredItem = ItemType.NONE;
 
 		_jewelSprite.enabled = false;
 		_quantityLabel.enabled = false;
+		_ballonSprite.enabled = false;
 		anim.Play("GuestMoveIn");
 
 		Invoke ("StartOrder",2.1f);
+	}
+
+	string GetJewelSpriteName()
+	{
+		string prefix = "Sprites/Order Icon/coloricon";
+		string url = prefix + (_requiredJewel + 1).ToString ();
+
+		return url;
 	}
 
 	void StartOrder()
 	{
 		_jewelSprite.enabled = true;
 		_quantityLabel.enabled = true;
+		_ballonSprite.enabled = true;
 		_readyToTakeOrder = true;
 		_isActive = true;
 	}
@@ -112,29 +124,14 @@ public class GuestPlaceholder : MonoBehaviour {
 		}
 
 	}
-	
-
-	// This C# function can be called by an Animation Event
-	public void OnEndMoveIn () {
-
-	}
 
 	public void OnEndMoveOut () {
-		_guestManager.RefillGuest (this);
+		//_guestManager.RefillGuest (this);
 	}
 
 	string GetGuestSpriteName(GuestType type)
 	{
-		switch (type) {
-		case GuestType.BEE:
-			return "char1";
-		case GuestType.FIREFLY:
-			return "char2";
-		case GuestType.HUMMING_BIRD:
-			return "char3";
-		default:
-			return "char1";
-		}
+		return "char1";
 	}
 
 	void MoveOut()
@@ -144,12 +141,20 @@ public class GuestPlaceholder : MonoBehaviour {
 		_quantityLabel.text = "OK!!";
 		_guestManager.OnLeaveQueue ();
 
-		Invoke ("PlayMoveout_Anim",2);
+		Invoke ("PlayMoveout_Anim",1);
+
+
 	}
 
 	void PlayMoveout_Anim()
 	{
+		_jewelSprite.enabled = false;
+		_quantityLabel.enabled = false;
+		_ballonSprite.enabled = false;
+
 		anim.Play ("GuestMoveOut");
+
+		Invoke ("OnEndMoveOut",2f);
 	}
 }
 

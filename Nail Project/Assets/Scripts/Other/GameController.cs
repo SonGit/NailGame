@@ -503,6 +503,10 @@ public class GameController : MonoBehaviour
         SoundController.Sound.Fire();
         List<CellObj> celleffect = new List<CellObj>();
         List<JewelObj> jeweldes = new List<JewelObj>();
+
+		if (JewelSpawner.spawn.JewelGribScript[x, _y] != null && JewelSpawner.spawn.JewelGribScript[x, _y].jewel.JewelType != 99 && GribManager.cell.GribCellObj[x, _y].cell.CellEffect == 0)
+		jeweldes.Add(JewelSpawner.spawn.JewelGribScript[x, _y]);
+
         for (int y = 0; y < GameController.HEIGHT; y++)
         {
             if (_y != y)

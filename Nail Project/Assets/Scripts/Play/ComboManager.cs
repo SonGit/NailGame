@@ -53,6 +53,8 @@ public class ComboManager : MonoBehaviour {
 					   (jewel.JewelPower == 7 && nearbyJewel.JewelPower == 7) ||
 					   (jewel.JewelPower == 7 && nearbyJewel.JewelPower == 6))
 					{
+						nearbyJewel.JewelPower = 98; //Force h stripe effect and v stripe effect to play at the same time
+						jewel.JewelPower = 0;
 						ComboStripe_Stripe(jewel.JewelPosition);
 					}
 					

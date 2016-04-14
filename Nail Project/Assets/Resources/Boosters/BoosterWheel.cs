@@ -5,6 +5,6 @@ public class BoosterWheel : BoosterBase {
 	public override void OnClick ()
 	{
 		Vector2 loc = GetRandomLocation (2,2);
-		Supporter.sp.SpawnJewelPower (8, (int)GameController.Power.WHEEL , loc ,true);
+		Supporter.sp.SpawnJewelPower (Random.Range(1,6), (int)GameController.Power.WRAPPER , loc ,true);
 	}
 }

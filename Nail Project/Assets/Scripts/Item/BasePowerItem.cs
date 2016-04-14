@@ -69,7 +69,7 @@ public abstract class BasePowerItem : MonoBehaviour {
 
 	void OnComleted()
 	{
-		GuestPlaceholder guest = GameController.action._guestManager.GetGuestThatNeedItem (_type);
+		Guest guest = GameController.action._guestManager.GetGuestThatNeedItem (_type);
 		if(guest != null)
 		FlyTo (guest.transform.position);
 	}

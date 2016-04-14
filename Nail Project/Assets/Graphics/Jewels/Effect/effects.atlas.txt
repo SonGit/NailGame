@@ -1,0 +1,153 @@
+
+effects.png
+size: 1024,512
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+cyanlight
+  rotate: true
+  xy: 409, 455
+  size: 42, 338
+  orig: 42, 338
+  offset: 0, 0
+  index: -1
+explosion1
+  rotate: false
+  xy: 955, 440
+  size: 64, 57
+  orig: 64, 57
+  offset: 0, 0
+  index: -1
+explosion2
+  rotate: false
+  xy: 560, 131
+  size: 156, 146
+  orig: 156, 146
+  offset: 0, 0
+  index: -1
+explosion3
+  rotate: false
+  xy: 209, 152
+  size: 174, 158
+  orig: 174, 158
+  offset: 0, 0
+  index: -1
+explosion4
+  rotate: false
+  xy: 209, 312
+  size: 198, 185
+  orig: 198, 185
+  offset: 0, 0
+  index: -1
+explosion5
+  rotate: false
+  xy: 2, 298
+  size: 205, 199
+  orig: 205, 199
+  offset: 0, 0
+  index: -1
+flare1
+  rotate: true
+  xy: 385, 118
+  size: 159, 173
+  orig: 159, 173
+  offset: 0, 0
+  index: -1
+flare2
+  rotate: true
+  xy: 749, 358
+  size: 139, 204
+  orig: 139, 204
+  offset: 0, 0
+  index: -1
+flare3
+  rotate: false
+  xy: 2, 97
+  size: 197, 199
+  orig: 197, 199
+  offset: 0, 0
+  index: -1
+flare4
+  rotate: false
+  xy: 746, 169
+  size: 187, 187
+  orig: 187, 187
+  offset: 0, 0
+  index: -1
+limelight
+  rotate: true
+  xy: 409, 411
+  size: 42, 335
+  orig: 42, 335
+  offset: 0, 0
+  index: -1
+orangelight
+  rotate: true
+  xy: 2, 53
+  size: 42, 325
+  orig: 42, 325
+  offset: 0, 0
+  index: -1
+pinklight
+  rotate: true
+  xy: 409, 367
+  size: 42, 335
+  orig: 42, 335
+  offset: 0, 0
+  index: -1
+redlight
+  rotate: true
+  xy: 409, 323
+  size: 42, 335
+  orig: 42, 335
+  offset: 0, 0
+  index: -1
+star1
+  rotate: false
+  xy: 96, 3
+  size: 45, 48
+  orig: 45, 48
+  offset: 0, 0
+  index: -1
+star2
+  rotate: true
+  xy: 190, 8
+  size: 43, 49
+  orig: 43, 49
+  offset: 0, 0
+  index: -1
+star3
+  rotate: false
+  xy: 2, 2
+  size: 45, 49
+  orig: 45, 49
+  offset: 0, 0
+  index: -1
+star4
+  rotate: false
+  xy: 955, 389
+  size: 45, 49
+  orig: 45, 49
+  offset: 0, 0
+  index: -1
+star5
+  rotate: false
+  xy: 49, 2
+  size: 45, 49
+  orig: 45, 49
+  offset: 0, 0
+  index: -1
+star6
+  rotate: false
+  xy: 143, 3
+  size: 45, 48
+  orig: 45, 48
+  offset: 0, 0
+  index: -1
+violetlight
+  rotate: true
+  xy: 409, 279
+  size: 42, 335
+  orig: 42, 335
+  offset: 0, 0
+  index: -1

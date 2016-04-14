@@ -4,139 +4,227 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 
 public enum GuestType{
-	BEE,
-	HUMMING_BIRD,
-	//LADY_BUG,
-	FIREFLY,
+	HIPPO,
+	CAT,
+	RABBIT,
 	NONE = 0xffffff
 }
 
-public class Guest : MonoBehaviour {
+public enum GuestState{
+	WALK_IN,
+	WALK_OUT,
+	IDLE,
+	SIT_DOWN,
+	STAND_UP,
+	STAND_BY
+}
 
-	public Text _label;
+public partial class Guest : MonoBehaviour {
+	//ANIMATION STUFFS//
+
+	protected const float DEFAULT_X_POS = 1000;
+	protected const float DEFAULT_Y_POS = 1000;
+	protected const float BACK_CHAIR_Z = 0;
+	protected const float FRONT_CHAIR_Z = -0.7f;
+
+	private GuestState state;
+
+	private GuestState _state
+	{
+		get { return state;}
+		set 
+		{
+			state = value;
+
+			if (state == GuestState.WALK_IN || state == GuestState.WALK_OUT || state == GuestState.IDLE) {
+				_anim.Reset();
+				_anim.skeleton.SetToSetupPose ();
+				_anim.state.SetAnimation( 0, _animValues[state] , true );
+			}
+
+			if (state == GuestState.SIT_DOWN) {
+				_anim.skeleton.SetToSetupPose ();
+				_anim.state.SetAnimation( 0, _animValues[state] , false );
+			}
+
+			if (state == GuestState.STAND_UP) {
+				_anim.skeleton.SetToSetupPose ();
+				_anim.state.SetAnimation( 0, _animValues[state] , false );
+			}
+
+			_anim.state.End += OnEnd;
+		}
+	}
 
 	public SkeletonAnimation _anim;
 
-	public GuestType _type;
-
-	public int _requiredItem;
-
-	public int _requiredQuantity;
-
-	public GuestGlass _glass;
-
-	private int _currentQuantity;
-
-	private GuestManager _guestManager;
-
-	private bool _isDisappearing;
-
-	private static readonly List<string> _animations = new List<string>(){
-		ResourcesMgr.Anim_Bee,
-		ResourcesMgr.Anim_HummingBird,
-		//		ResourcesMgr.Anim_Ladybug,
-		ResourcesMgr.Anim_Firefly,
+	Dictionary<GuestState,string> _animValues = new Dictionary<GuestState, string>
+	{
+		{GuestState.WALK_IN,"walking"},
+		{GuestState.WALK_OUT,"walking"},
+		{GuestState.IDLE,"idle"},
+		{GuestState.SIT_DOWN,"sitdown"},
+		{GuestState.STAND_UP,"standup"},
 	};
+		
+	void WalkIn()
+	{
+		_state = GuestState.WALK_IN;
 
-	// Use this for initialization
-	void Start () {
-		_guestManager = this.GetComponentInParent<GuestManager>();
+		_anim.transform.localPosition = new Vector3 ( DEFAULT_X_POS, 0 , BACK_CHAIR_Z );
+
+		iTween.MoveTo(_anim.gameObject,iTween.Hash("position",Vector3.zero,
+												   "easetype",iTween.EaseType.easeInSine,
+												   "islocal",true,
+												   "time",3f,
+											       "oncomplete" , "OnEndWalkIn",
+												   "oncompletetarget" , this.gameObject));
 	}
 
-	public void Init(GuestType guestType,int itemType,int quantity )
+	void WalkOut()
 	{
-		_type = guestType;
-		_requiredItem = itemType;
-		_requiredQuantity = quantity;
+		_state = GuestState.WALK_OUT;
 
-		_currentQuantity = 0;
-		_glass.Init (itemType);
-		_label.enabled = true;
-		_label.text = quantity.ToString();
-		UpdateAnimation (_animations [(int)guestType]);
-		PlayAppearAnim ();
+		_anim.transform.localPosition = Vector3.zero;
+		iTween.MoveTo(_anim.gameObject,iTween.Hash("position", new Vector3(-1000,0,0),
+												"easetype",iTween.EaseType.easeInSine,
+												"islocal",true,
+												"time",3f,
+												"oncomplete" , "OnEndWalkOut",
+												"oncompletetarget" , this.gameObject));
 	}
-	
-	public void Fill(int score)
+
+	void StandUp()
 	{
-		StartCoroutine (Fill_Async(score));
-	}
+		_state = GuestState.STAND_UP;
 	
-	private IEnumerator Fill_Async(int score)
+		iTween.MoveTo(_anim.gameObject,iTween.Hash("position", (_anim.transform.localPosition + new Vector3(0,10,0)),
+			"easetype",iTween.EaseType.easeInSine,
+			"islocal",true,
+			"time",0.5f,
+			"oncomplete" , "WalkOut",
+			"oncompletetarget" , this.gameObject));
+	}
+
+	void OnEndWalkIn()
 	{
-		yield return new WaitForSeconds (0.85f);//By this time, all cells have reached the glasses.
-		_currentQuantity += score;
-		if (_currentQuantity >= _requiredQuantity) {
-			PlayDisappearAnim ();
-			_label.enabled = false;
-		} else {
-			_label.text = (_requiredQuantity - _currentQuantity).ToString();
-			_glass.Fill ((_currentQuantity * 100)/_requiredQuantity);
-		}
+		_anim.transform.localPosition += new Vector3 ( 0, 50 , FRONT_CHAIR_Z);
+		_state = GuestState.SIT_DOWN;
 	}
-	
-	private void UpdateAnimation ( string name ){
-		_anim.skeletonDataAsset = ResourcesMgr.GetAnimation( name );
-		_anim.Reset();
-		_anim.skeleton.SetToSetupPose ();
-		//_anim.state.SetAnimation (0, GameService.Anim_Value_Normal, true);
-	}
-	
-	private void PlayAppearAnim()
+
+	void OnEndWalkOut()
 	{
-		StartCoroutine (Appear_Async ());
+		_state = GuestState.STAND_BY;
+		_guestManager.RefillGuest (this);
 	}
-	
-	private void PlayDisappearAnim()
+
+	void OnEndSitdown()
 	{
-		StartCoroutine (PlayDisappearAnim_Async ());
+		_state = GuestState.IDLE;
+		Invoke ("EnableBalloon",.25f);
 	}
-	
-	private void PlayIdleAnim()
-	{
-		StartCoroutine (PlayIdleAnim_Async ());
-	}
-	
-	private IEnumerator Appear_Async( ){
-		_anim.state.SetAnimation( 0, ResourcesMgr.Anim_Guest_Value_Appear , false );
-		_anim.state.End += OnEndAppear;
-		yield return null;
-	}
-	
-	private void OnEndAppear( Spine.AnimationState state , int trackIndex)
-	{
-		_anim.state.End -= OnEndAppear;
-		_isDisappearing = false;
-		PlayIdleAnim ();
-	}
-	
-	private IEnumerator PlayIdleAnim_Async( ){
-		yield return new WaitForSeconds (7f);
-		while(!_isDisappearing)
-		{
-			int percentage = Random.Range (0, 100);
-			if (percentage < 50) {
-				_anim.state.SetAnimation( 0, ResourcesMgr.Anim_Guest_Value_Blink , false );
-			}
-			if( percentage > 50){
-				_anim.state.SetAnimation( 0, ResourcesMgr.Anim_Guest_Value_Idle , false );
-			}
-			
-			yield return new WaitForSeconds ((float)Random.Range(4,7));
-		}
-	}
-	
-	private IEnumerator PlayDisappearAnim_Async( ){
-		_isDisappearing = true;
-		_anim.state.SetAnimation( 0, ResourcesMgr.Anim_Guest_Value_Disappear , false );
-		_anim.state.End += OnEnd;
-		yield return null;
-	}
-	
+		
 	private void OnEnd( Spine.AnimationState state , int trackIndex)
 	{
 		_anim.state.End -= OnEnd;
-//		_guestManager.RefillGuest (this);
-		_glass.Fill (0);
+
+		if (_state == GuestState.SIT_DOWN) {
+			OnEndSitdown();
+		}
+	}
+
+	public GuestState GetState()
+	{
+		return _state;
+	}
+		
+}
+
+
+
+public partial class Guest
+{
+	public Text _quantityLabel;
+
+	public Image _shellacSprite;
+
+	public Image _ballonSprite;
+
+	public int _requiredShellac;
+
+	private GuestManager _guestManager;
+
+	public GuestType _guestType;
+
+	public int _numOrder;
+
+	public int requiredQuantity;
+
+	private int _requiredQuantity
+	{
+		get { return requiredQuantity; }
+		set 
+		{
+			requiredQuantity = value;
+			_quantityLabel.text = value.ToString ();
+		}
+	}
+
+	void Start()
+	{
+		_guestManager = this.GetComponentInParent<GuestManager>();
+	}
+
+	public void Init(GuestType guestType,int shellacType,int quantity,int numOrder)
+	{
+		_requiredShellac = shellacType;
+		_guestType = guestType;
+		_requiredQuantity = quantity;
+		_numOrder = numOrder;
+		HideBalloon ();
+		WalkIn ();
+	}
+
+	void HideBalloon()
+	{
+		_shellacSprite.enabled = false;
+		_quantityLabel.enabled = false;
+		_ballonSprite.enabled  = false;
+	}
+
+	void EnableBalloon()
+	{
+		_shellacSprite.enabled = true;
+		_quantityLabel.enabled = true;
+		_ballonSprite.enabled  = true;
+		_shellacSprite.sprite = Resources.Load<Sprite>( GetShellacSpriteName() );
+	}
+
+	string GetShellacSpriteName()
+	{
+		string prefix = "Sprites/Order Icon/coloricon";
+		string url = prefix + (_requiredShellac + 1).ToString ();
+
+		return url;
+	}
+
+	public void Fill(int score)
+	{
+		if (_state != GuestState.IDLE || _requiredQuantity <= 0)
+			return;
+		
+		_requiredQuantity -= score;
+
+		if (_requiredQuantity <= 0) {
+			StartCoroutine (OnCompletedOrder ());
+		}
+	}
+
+	IEnumerator OnCompletedOrder()
+	{
+		_quantityLabel.text = "OK!";
+		yield return new WaitForSeconds (2f);
+		HideBalloon ();
+		WalkOut();
 	}
 }

@@ -8,6 +8,8 @@ using System.Linq;
 public class GuestManager : MonoBehaviour {
 	
 	public GuestPlaceholder[] _guests;
+	public Guest[] _guests2;
+
 	public Text _numQueueLabel;
 	int _numqueue;
 	int _totalGuest;
@@ -40,16 +42,16 @@ public class GuestManager : MonoBehaviour {
 		_totalGuest = _numQueue + 3; //total = guest on the bar + queued guest
 		InitGuests ();
 	}
-	
+
 	// Update is called once per frame
 	public void InitGuests()
 	{
-		foreach (GuestPlaceholder guest in _guests) {
+		foreach (Guest guest in _guests2) {
 			InitGuest(guest);
 		}
 	}
 	
-	public void RefillGuest(GuestPlaceholder guest)
+	public void RefillGuest(Guest guest)
 	{
 		if (_numQueue <= 0)
 			return;
@@ -59,20 +61,21 @@ public class GuestManager : MonoBehaviour {
 		InitGuest (guest);
 	}
 
-	void InitGuest(GuestPlaceholder guest)
+	void InitGuest(Guest guest)
 	{
 		int rand = UnityEngine.Random.Range (0,2);
 		//if(rand == 0)
-		guest.Init( GetRandomizedGuestType(), GetRandomizedJewelType(), GetRamdomizedQuantity(),_currentOrderNo ++ );
+		guest.Init( GetRandomizedGuestType(), GetRandomizedJewelType(), GetRamdomizedQuantity(),_currentOrderNo ++);
 		//else
 			//guest.Init( GetRandomizedGuestType(), GetRandomizedItemType() );
 	}
 	
-	public GuestPlaceholder GetGuestThatNeedJewel(int jewelType)
+	public Guest GetGuestThatNeedShellac(int shellacType)
 	{
-		List<GuestPlaceholder> guestList = new List<GuestPlaceholder>();
-		foreach (GuestPlaceholder guest in _guests) {
-			if(guest._requiredJewel == jewelType && guest._readyToTakeOrder)
+		List<Guest> guestList = new List<Guest>();
+
+		foreach (Guest guest in _guests2) {
+			if(guest._requiredShellac == shellacType )
 			{
 				guestList.Add(guest);
 			}
@@ -84,27 +87,29 @@ public class GuestManager : MonoBehaviour {
 			return GetPrioritizedGuest (guestList);
 	}
 
-	public GuestPlaceholder GetGuestThatNeedItem(ItemType itemType)
+	public Guest GetGuestThatNeedItem(ItemType itemType)
 	{
-		List<GuestPlaceholder> guestList = new List<GuestPlaceholder>();
+		//List<Guest> guestList = new List<Guest>();
 
-		foreach (GuestPlaceholder guest in _guests) {
-			if(guest._requiredItem == itemType && guest._readyToTakeOrder)
-			{
-				guestList.Add(guest);
-			}
-		}
+		//foreach (Guest guest in _guests) {
+			//if(guest._requiredItem == itemType && guest._readyToTakeOrder)
+			//{
+				//guestList.Add(guest);
+			//}
+		//}
 
-		if (guestList.Count == 0)
-			return null;
-		else 
-			return GetPrioritizedGuest (guestList);
+		//if (guestList.Count == 0)
+			//return null;
+		//else 
+			//return GetPrioritizedGuest (guestList);
+
+		return null;
 	}
 
 	public void GiveItemToFirstFoundGuest()
 	{
 		foreach (GuestPlaceholder guest in _guests) {
-			if(guest._requiredItem != ItemType.NONE && guest._requiredItem != null)
+			if(guest._requiredItem != ItemType.NONE)
 			{
 				guest.GiveItem();
 				return;
@@ -112,14 +117,16 @@ public class GuestManager : MonoBehaviour {
 		}
 	}
 
-	public void FillGuest(int jewelType,int score)
+	public Guest FillGuest(int shellacType,int score)
 	{
-		var guestFound = GetGuestThatNeedJewel (jewelType);
+		var guestFound = GetGuestThatNeedShellac (shellacType);
 		if (guestFound != null)
 			guestFound.Fill (score);
+
+		return guestFound;
 	}
 
-	GuestPlaceholder GetPrioritizedGuest(List<GuestPlaceholder> guestList)
+	Guest GetPrioritizedGuest(List<Guest> guestList)
 	{
 		//Old guests has priority over recently added guest
 		guestList = guestList.OrderBy (v => v._numOrder).ToList();

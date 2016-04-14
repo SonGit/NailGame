@@ -6,7 +6,7 @@ public class BoosterCombo : BoosterBase {
 	public override void OnClick ()
 	{
 		Vector2 loc = GetRandomLocation (2,2);
-		Supporter.sp.SpawnJewelPower ( Random.Range(0,6), (int)GameController.Power.WRAPPER , loc ,true);
+		Supporter.sp.SpawnJewelPower ( Random.Range(0,6), (int)GameController.Power.STRIPED_HORIZONTAL , loc ,true);
 		
 		Vector2[] neighboringLocations = Supporter.sp.Get4DirectionVector (loc);
 		

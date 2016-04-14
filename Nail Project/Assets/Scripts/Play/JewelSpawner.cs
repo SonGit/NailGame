@@ -22,14 +22,6 @@ public class JewelSpawner : MonoBehaviour
 
     public GameObject StarEffect;
 
-    public GameObject JewelColor;
-
-	public GameObject Wrapper;
-
-	public GameObject Striped_h;
-
-	public GameObject Striped_v;
-
 	public GameObject JewelWheel;
 
 	public GameObject Lucky;
@@ -345,8 +337,6 @@ public class JewelSpawner : MonoBehaviour
 	{
 		switch(power)
 		{
-			case 5://Wrapper
-			return (GameObject)Instantiate(Wrapper);
 			case 9://Wheel
 			return (GameObject)Instantiate(JewelWheel);
 			case 10://Lucky

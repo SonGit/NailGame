@@ -32,14 +32,20 @@ public class JewelObj : MonoBehaviour
 
 	public void SetSkin(int type,int power = -1)
 	{
-		render =  transform.GetChild(0).GetComponent<SkeletonAnimation>();
+		render = transform.GetChild (0).GetComponent<SkeletonAnimation> ();
 		render.enabled = true;
 
-		string skinName = "item" + (type + 1).ToString();
+		string skinName = "item" + (type + 1).ToString ();
+
 		if (power != -1)
-			skinName = SetSkin_Power (power,skinName);
+			skinName = SetSkin_Power (power, skinName);
+
+		if (render.skeleton.data.FindSkin (skinName) != null) {
+			render.skeleton.SetSkin (skinName);
+		} else {
+			render.skeleton.SetSkin ("item8"); //if invalid skin name, fall to this skin
+		}
 	
-		render.skeleton.SetSkin(skinName);
 		render.gameObject.transform.localScale = Vector3.one;
 		render.enabled = false;
 	}
@@ -50,8 +56,10 @@ public class JewelObj : MonoBehaviour
 			return skinName + "v";
 		if (power == (int)GameController.Power.STRIPED_HORIZONTAL)
 			return skinName + "h";
+		if (power == (int)GameController.Power.WRAPPER)
+			return skinName + "s";
 		if (power == (int)GameController.Power.MAGIC)
-			return "item8";
+			return "item7";
 		
 		return skinName;
 	}
@@ -59,21 +67,15 @@ public class JewelObj : MonoBehaviour
     //delete jewel
     public void Destroy()
     {
-		FillGlass(jewel.JewelType);
+		int score = 1;
+		Guest guest = GameController.action._guestManager.FillGuest (jewel.JewelType,score);
 
-		GuestPlaceholder guest = GameController.action._guestManager.GetGuestThatNeedJewel (jewel.JewelType);
 		if(guest != null)
-		EffectSpawner.effect.MiniStar (transform.position,guest.transform.position);
+			EffectSpawner.effect.MiniStar (transform.position,guest.transform.position + new Vector3(0,1,0));
 
         RemoveFromList((int)jewel.JewelPosition.x, (int)jewel.JewelPosition.y);
         StartCoroutine(_Destroy());
     }
-
-	void FillGlass(int jewelType)
-	{
-		int score = 1;
-		GameController.action._guestManager.FillGuest (jewelType,score);
-	}
 
     /// <summary>
     /// power of jewel
@@ -102,17 +104,26 @@ public class JewelObj : MonoBehaviour
                 GameController.action.PBonusTime();
 				break;
 
-			case 5:
+			case 5: //WRAPPER
+				EffectSpawner.effect.WrapperEffect(transform.position,jewel.JewelType);
 				Supporter.sp.DestroyAdjacentJewel(this);
                 break;
 
-			case 6:
-				EffectSpawner.effect.FireArrow(transform.position, false);
+			case 6: //STRIPED_VERTICAL
+				EffectSpawner.effect.StripedEffect(transform.position,jewel.JewelType,true);
+				//EffectSpawner.effect.FireArrow(transform.position, false);
 				GameController.action.PDestroyCollumn((int)jewel.JewelPosition.x, (int)jewel.JewelPosition.y);
 				break;
 
-			case 7:
-				EffectSpawner.effect.FireArrow(transform.position, false);
+			case 7: //STRIPED_HORIZONTAL
+				EffectSpawner.effect.StripedEffect(transform.position,jewel.JewelType);
+				GameController.action.PDestroyRow((int)jewel.JewelPosition.x, (int)jewel.JewelPosition.y);
+				break;
+
+			case 98://Play 2 stripe effect and destroy columns accordingly.Happen only in stripe+stripe combo
+				EffectSpawner.effect.StripedEffect(transform.position,jewel.JewelType);
+				EffectSpawner.effect.StripedEffect(transform.position,jewel.JewelType,true);
+				GameController.action.PDestroyCollumn((int)jewel.JewelPosition.x, (int)jewel.JewelPosition.y);
 				GameController.action.PDestroyRow((int)jewel.JewelPosition.x, (int)jewel.JewelPosition.y);
 				break;
         }

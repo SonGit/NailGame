@@ -303,9 +303,8 @@ public class Supporter : MonoBehaviour
 
 	IEnumerator SpawnJewelPower_Async(int type, int power, Vector2 pos,bool playAppearAnim = false)
 	{
-		yield return new WaitForSeconds(0.6f);
+		yield return new WaitForSeconds(0.05f);
 		GameObject tmp = JewelSpawner.spawn.SpawnJewelPower(type, power, pos);
-		if(playAppearAnim)
 		tmp.GetComponent<JewelObj> ().JewelEnable ();
 	}
 
