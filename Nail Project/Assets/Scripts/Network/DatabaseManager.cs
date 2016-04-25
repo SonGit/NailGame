@@ -85,6 +85,7 @@ public class DatabaseManager
 		connection.CreateTable<LevelTable> ();
 		connection.CreateTable<AcountTable> ();
 		connection.CreateTable<SessionTable> ();
+		connection.CreateTable<FriendTable> ();
 	}
 	
 	/**
@@ -101,7 +102,9 @@ public class DatabaseManager
 		string DatabaseName = "config.db";
 		#if UNITY_EDITOR
 		DatabaseName = "configEditor3.db";
-		var dbPath = string.Format(@"Assets/StreamingAssets/{0}", DatabaseName);
+		var dbPath = System.IO.Path.Combine(Application.streamingAssetsPath, DatabaseName);
+		//Debug.Log(dbPath);
+		//Debug.Log(System.IO.Path.Combine(Application.streamingAssetsPath, DatabaseName));
 		#else
 		// check if file exists in Application.persistentDataPath
 		var filepath = string.Format("{0}/{1}", Application.persistentDataPath, DatabaseName);
@@ -112,7 +115,7 @@ public class DatabaseManager
 			// open StreamingAssets directory and load the db ->
 			
 			#if UNITY_ANDROID 
-			var loadDb = new WWW("jar:file://" + Application.dataPath + "!/assets/" + DatabaseName);  // this is the path to your StreamingAssets in android
+		var loadDb = new WWW(System.IO.Path.Combine(Application.streamingAssetsPath, DatabaseName));  // this is the path to your StreamingAssets in android
 			while (!loadDb.isDone) { }  // CAREFUL here, for safety reasons you shouldn't let this while loop unattended, place a timer and error check
 			// then save to Application.persistentDataPath
 			File.WriteAllBytes(filepath, loadDb.bytes);
@@ -394,7 +397,9 @@ public class DatabaseManager
 					UserId = encryptUserId,
 					SessionKey = encryptSessionKey
 				};
+	
 				int isSuccess = connection.Update(p);
+	
 				if (isSuccess == 0 )
 				{
 					connection.Insert(p);
@@ -459,7 +464,6 @@ public class DatabaseManager
 	{
 		Hashtable hash = new Hashtable ();
 		hash [DatabaseManager.FRIEND_INFO] = friends;
-
 		ThreadPool.QueueUserWorkItem (insertFriends, hash);
 	}
 	
@@ -470,13 +474,15 @@ public class DatabaseManager
 			try
 			{
 				deleteAllFriends();
-
+	
 				Hashtable hash = (Hashtable)obj;
-				List<FriendEntity> friends = (List<FriendEntity>) hash[DatabaseManager.FRIEND_INFO];
 
+				List<FriendEntity> friends = (List<FriendEntity>) hash[DatabaseManager.FRIEND_INFO];
+	
 				for (int i = 0; i < friends.Count; i++)
 				{
-					var p = new FriendTable{
+	
+				var p = new FriendTable{
 						UserId = friends[i].UserId,
 						DisplayName = friends[i].Name,
 						Avatar = friends[i].Avatar,
@@ -485,11 +491,14 @@ public class DatabaseManager
 						Score = friends[i].Score,
 						FbId = friends[i].FBId
 					};
+
 					int isSuccess = connection.Update(p);
+	
 					if (isSuccess == 0 )
 					{
 						connection.Insert(p);
 					}
+	
 				}
 			}
 			catch(Exception ex)
@@ -514,8 +523,10 @@ public class DatabaseManager
 			try
 			{
 				Action<DBCallback> callback = (Action<DBCallback>)obj;
+
 				List<FriendEntity> friends = new List<FriendEntity>();
 				IEnumerable<FriendTable> dataTable = connection.Table<FriendTable>();
+
 				foreach (FriendTable item in dataTable)
 				{
 					FriendEntity friend = new FriendEntity();
@@ -528,12 +539,12 @@ public class DatabaseManager
 					friend.FBId = item.FbId;
 
 					friends.Add(friend);
-				}
-				
+			   } 
 				DBCallback dbCallback = new DBCallback ();
 				dbCallback.Data = friends;
 				dbCallback.completedCallback = callback;
 				DBCallbackDispatcher.Singleton.requests.Enqueue (dbCallback);
+				Debug.Log("Completed: "+friends.Count);
 			}
 			catch(Exception ex)
 			{
@@ -544,12 +555,14 @@ public class DatabaseManager
 	
 	public void deleteAllFriends() 
 	{
+		return;
 		IEnumerable<FriendTable> dataTable = connection.Table<FriendTable>();
 		foreach (FriendTable item in dataTable)
 		{
-			connection.Delete(item);
-			break;
+		connection.Delete(item);
+			//break;
 		}
+		Debug.Log ("deleted AllFriends");
 	}
 }
 

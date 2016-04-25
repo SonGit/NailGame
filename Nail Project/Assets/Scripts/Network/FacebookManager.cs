@@ -1,16 +1,41 @@
-﻿
+﻿using UnityEngine;
 using System.Collections;
+using Facebook;
 using Facebook.Unity;
-using UnityEngine;
 using System.Collections.Generic;
 
-public class FacebookManager  {
-	
-	private static volatile FacebookManager instance 		= null;
-	private static object singletonLock 					= new object();
+public class FacebookManager
+{
+	private const string TAG  = "FacebookManager";
+	private static volatile FacebookManager instance = null;
+	private static object singletonLock = new object();
 
-	public static FacebookManager Instance
+	public enum FBUserType
 	{
+		ME,
+		FRIEND
+	}
+
+	public enum FBRequestType
+	{
+		LIFE,
+		PASS
+	}
+
+	/**
+	 * Singleton methods
+	 */
+
+	public FacebookManager ()
+	{
+
+	}
+
+	public void Init()
+	{
+	}
+
+	public static FacebookManager Instance {
 		get
 		{
 			if ( instance == null )
@@ -18,7 +43,6 @@ public class FacebookManager  {
 				lock( singletonLock )
 				{				
 					instance = new FacebookManager();
-					instance.Init ();
 				}
 			}
 
@@ -26,104 +50,46 @@ public class FacebookManager  {
 		}
 	}
 
-	void Init()
+	public void GetFbInfo(FacebookDelegate<ILoginResult> callback)
 	{
-
+		Debug.Log(TAG + ": " + "GetFbInfo");	
+		//FB.API("/me?fields=id,first_name", Facebook.HttpMethod.GET, callback);
 	}
 
-	public void RequestLoginFB()
+	public void LoadPicture(string url, FacebookDelegate<ILoginResult> callback)
 	{
-		if (!FB.IsInitialized)
-			FB.Init (this.LoginFB);
-		else
-			LoginFB ();
+		Debug.Log(TAG + ": " + "LoadPicture");		
+		//FB.API (url, Facebook.HttpMethod.GET, callback);		
 	}
 
-	public void RequestConnectFB()
+	public void Login(FacebookDelegate<ILoginResult> callback)
 	{
-		if (!FB.IsInitialized)
-			FB.Init (this. requestLoginFB);
-		else
-			requestLoginFB() ;
+		Debug.Log(TAG + ": " + "Login");		
+		FB.LogInWithReadPermissions(new List<string>(){"public_profile", "email", "user_friends"}, callback);
 	}
 
-	void LoginFB()
-	{
-		FB.LogInWithReadPermissions(new List<string>() { "public_profile", "email", "user_friends" }, this.HandleResult);
-	}
-
-	protected void HandleResult(IResult result)
-	{
-		if (result == null)
-		{
-			
-			return;
-		}
-
-		SessionManager.Instance.UserInfo.UserId = Facebook.Unity.AccessToken.CurrentAccessToken.UserId;
-		SessionManager.Instance.UserInfo.AccessToken = Facebook.Unity.AccessToken.CurrentAccessToken.TokenString;
-
-		requestConnectFB ();
-	}
-
-	private void requestConnectFB()
-	{
-		Debug.Log("requestConnectFB");
-
-		RequestManager.Instance.requestFacebookConnect (SessionManager.Instance.SessionKey, SessionManager.Instance.UserInfo.AccessToken, ConnectFBCallback, ConnectFBError);
-	}
-
-	void ConnectFBCallback(object data, int errorCode)
-	{
-		Debug.Log("ConnectFBCallback result with errorCode " + errorCode);
-		if (errorCode == 0)
-		{
-			SessionManager.Instance.Account.UserId = Facebook.Unity.AccessToken.CurrentAccessToken.UserId;
-			SessionManager.Instance.Token = Facebook.Unity.AccessToken.CurrentAccessToken.TokenString;
-			requestLoginFB();
+	private void AuthCallback (ILoginResult result) {
+		if (FB.IsLoggedIn) {
+			// AccessToken class will have session details
+			var aToken = Facebook.Unity.AccessToken.CurrentAccessToken;
+			// Print current access token's User ID
+			Debug.Log(aToken
+				.UserId);
+			// Print current access token's granted permissions
+			foreach (string perm in aToken.Permissions) {
+				Debug.Log(perm);
+			}
+		} else {
+			Debug.Log("User cancelled login");
 		}
 	}
 
-	void ConnectFBError(object data, int errorCode)
+	public void Logout()
 	{
-		Debug.Log("ConnectFBError result with errorCode " + errorCode);
+		Debug.Log(TAG + ": " + "Logout");		
+		FB.LogOut ();
 	}
 
-	private void requestLoginFB()
-	{
-		Debug.Log("requestLoginFB");
-		RequestManager.Instance.requestLoginFacebook (SessionManager.Instance.UserInfo.AccessToken, LoginFBCallback, LoginFBError);
-	}
 
-	void LoginFBCallback(object data, int errorCode)
-	{
-		Debug.Log("LoginFBCallback result with errorCode " + errorCode);
-		if (errorCode == 0)
-		{
-			Dictionary<string, object> resultData = (Dictionary<string, object>)data;
-			SessionManager.Instance.SessionKey = (string)resultData[GameConstants.RESPONE_KEY_SESSION_KEY];	
-			insertSession(SessionManager.Instance.Account.UserId, SessionManager.Instance.SessionKey);
-			OnLoggedIn ();
-		}
-	}
 
-	void LoginFBError(object data, int errorCode)
-	{
-		Debug.Log("LoginFBError result with errorCode " + errorCode);
-	}
-
-	private void insertSession(string userId, string sessionKey)
-	{
-		DatabaseManager.Instance.InsertSession (userId, sessionKey);
-	}
-
-	void OnLoggedIn()
-	{
-		SessionManager.Instance.SaveSession ();
-
-		if (Application.loadedLevelName == "HomeScene") {
-			Application.LoadLevel("MapScene");
-			CameraMovement.StarPointMoveIndex = -1;
-		}
-	}
 }

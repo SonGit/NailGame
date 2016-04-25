@@ -20,6 +20,11 @@ public class ButtonActionController : MonoBehaviour
         }
     }
 
+	void Start()
+	{
+		MainMenu.Instance.GameScene = (int)MainMenu.Scene.MAIN_MENU;
+	}
+
     /// <summary>
     /// When select classic mode
     /// </summary>

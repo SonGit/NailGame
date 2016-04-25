@@ -12,6 +12,7 @@ namespace com.b2mi.dc.Entity
 		private Dictionary<int, LevelEntity> levels;
 		private LevelEntity currentLevel;
 		private LevelEntity highestLevelEntity;
+		private Dictionary<int, List<FriendEntity>> friendLevels;
 
 		private int lives;
 		private int gold;
@@ -80,6 +81,12 @@ namespace com.b2mi.dc.Entity
 		{
 			get { return levels;}
 			set { levels = value;}
+		}
+
+		public  Dictionary<int, List<FriendEntity>> FriendLevels
+		{
+			get { return friendLevels;}
+			set { friendLevels = value;}
 		}
 		
 		public Texture UserTexture

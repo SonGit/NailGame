@@ -2,11 +2,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using Facebook.Unity;
+using com.b2mi.dc.Entity;
+using System;
 
 public class LoginPopup : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+
+		//FB.Init ();
 		DatabaseManager.Instance.createTable ();
 
 		AccountType accountType = SessionManager.Instance.LoadSession ();
@@ -17,7 +21,7 @@ public class LoginPopup : MonoBehaviour {
 		}
 		if (accountType == AccountType.FACEBOOK) {
 			print ("FB");
-			FacebookManager.Instance.RequestConnectFB ();
+			//FacebookManager.Instance.RequestConnectFB ();
 		}
 
 		//SessionManager.Instance.ClearSession ();
@@ -80,10 +84,10 @@ public class LoginPopup : MonoBehaviour {
 		{
 			Dictionary<string, object> resultData = (Dictionary<string, object>)data;
 			SessionManager.Instance.SessionKey = (string)resultData[GameConstants.RESPONE_KEY_SESSION_KEY];	
-			//requestGetFriendPlayedGame(1, 500);
+			requestGetFriendPlayedGame(1, 500);
 
 			SessionManager.Instance.SaveSession ();
-			NextScene ();
+			//NextScene ();
 		}
 	}
 
@@ -104,6 +108,8 @@ public class LoginPopup : MonoBehaviour {
 		
 
 
+	public Dictionary<string, FriendEntity> Friends 		= new Dictionary<string, FriendEntity>();
+	public Dictionary<int, List<FriendEntity>> FriendLevels 		= new Dictionary<int, List<FriendEntity>> ();
 
 	private void requestGetFriendPlayedGame(int page, int count)
 	{
@@ -115,8 +121,44 @@ public class LoginPopup : MonoBehaviour {
 		Debug.Log("GetFriendPlayedGameCallback result with errorCode " + errorCode);
 		if (errorCode == 0)
 		{
-			
-	
+			try
+			{
+				FriendLevels.Clear();
+				List<FriendEntity> resultData = (List<FriendEntity>)data;
+				if (resultData != null)
+				{
+					List<FriendEntity> friends = new List<FriendEntity>();
+					int level = 1;
+					foreach(FriendEntity friend in resultData)
+					{
+						level = friend.Level;					
+
+						if (FriendLevels.ContainsKey(friend.Level) == false) 
+							FriendLevels[friend.Level] = new List<FriendEntity>();
+
+						friends.Add(friend);
+						if (FriendLevels[friend.Level].Contains(friend)) {
+							var i = FriendLevels[friend.Level].FindIndex(x=> x == friend);
+							if (i != -1)
+								FriendLevels[friend.Level][i] = friend;
+						} else {
+							FriendLevels[friend.Level].Add(friend);
+						}
+					}
+
+					resultData.Clear();	
+					if (friends.Count > 0)
+					{
+						//deleteFriendLevels();
+						insertFriendLevels(friends);
+						SessionManager.Instance.UserInfo.FriendLevels = FriendLevels;
+					}
+				}
+			}
+			catch(Exception ex)
+			{
+				Debug.LogWarning("GetFriendPlayedGameCallback result " + ex.ToString());
+			}
 		}
 	}
 
@@ -125,9 +167,16 @@ public class LoginPopup : MonoBehaviour {
 		Debug.Log("GetFriendPlayedGameError result with errorCode " + errorCode);
 	}	
 
+	private void insertFriendLevels(List<FriendEntity> friends)
+	{
+		DatabaseManager.Instance.InsertFriends (friends);
+	}
+
 	void NextScene()
 	{
 		Application.LoadLevel("MapScene");
 		CameraMovement.StarPointMoveIndex = -1;
 	}
+
+
 }

@@ -69,14 +69,13 @@ public class SessionManager {
 
 	public void SaveSession()
 	{
-		ClearSession ();
 		// No access token = normal account
 		if (SessionManager.Instance.UserInfo.AccessToken == String.Empty) {
 			PlayerPrefs.SetString ("Username", SessionManager.Instance.Account.UserName);
 			PlayerPrefs.SetString ("Password", SessionManager.Instance.Account.Password);
 		} else {
 			//Facebook account
-			PlayerPrefs.SetString ("AccessToken", SessionManager.Instance.Token);
+			PlayerPrefs.SetString ("AccessToken", SessionManager.Instance.UserInfo.AccessToken);
 		}
 
 		PlayerPrefs.SetString ("SessionKey", SessionManager.Instance.SessionKey);

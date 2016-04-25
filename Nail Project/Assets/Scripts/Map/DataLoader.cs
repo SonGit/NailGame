@@ -5,9 +5,15 @@ using System.Collections.Generic;
 using Facebook.Unity;
 using Facebook.MiniJSON;
 using UnityEngine.UI;
+using System.Linq;
+using com.b2mi.dc.Entity;
+using System;
+using com.b2mi.dc.Database;
 
 public class DataLoader : MonoBehaviour
 {
+	public Text testText; 
+
     public static DataLoader Data;                              // instance of  this class
 
     public static List<Player> MyData = new List<Player>();     // list of Player object
@@ -44,6 +50,8 @@ public class DataLoader : MonoBehaviour
 
 	public const int MAX_FRIENDS_TO_DISPLAY_MAP = 3;
 
+	public List<GameObject> _friendProgress = new List<GameObject>();
+
     bool hold;
 
     GameObject holdobj;
@@ -58,6 +66,8 @@ public class DataLoader : MonoBehaviour
     {
         Time.timeScale = 1;
         listmap = new GameObject[297];
+		MainMenu.Instance.GameScene = (int)MainMenu.Scene.MAP;
+
         //PlayerPrefs.DeleteKey(KEY_FRISTTIME);
         if (PlayerPrefs.GetInt(KEY_FRISTTIME, 0) == 0)
         {
@@ -66,6 +76,7 @@ public class DataLoader : MonoBehaviour
         }
 
         StartCoroutine(MapButtonDrawer());
+
     }
 
     GameObject moveobj(Vector3 mouseposition)
@@ -107,7 +118,7 @@ public class DataLoader : MonoBehaviour
 
             yield return null;
         }
-        Debug.Log("3");
+
         processbar.transform.parent.gameObject.SetActive(false);
         DataLoader.enableclick = true;
         if (CameraMovement.StarPointMoveIndex != -1 && CameraMovement.StarPointMoveIndex != 297)
@@ -169,15 +180,72 @@ public class DataLoader : MonoBehaviour
 
 	GameObject[] friendObjs;
 
-	void SetFriendProgress()
+	void Callback(Action<DBCallback> callback)
 	{
-		if (!FB.IsLoggedIn) {
-			return;
-		}
 
-		friendObjs = new GameObject[MAX_FRIENDS_TO_DISPLAY_MAP];
-		
-		FB.API ("/me/friends", Facebook.Unity.HttpMethod.GET, FriendsCallback);
+	}
+
+	public void SetFriendProgress()
+	{
+		ClearFriendProgress ();
+
+		Dictionary<int, List<FriendEntity>> FriendLevels =  new Dictionary<int, List<FriendEntity>> ();
+		testText.text = "1";
+		DatabaseManager.Instance.GetFriends (( dbCallback ) => {
+			Debug.Log( "get Friend Levels result" );
+			testText.text = "get Friend Levels result";
+			FriendLevels.Clear();
+			List<FriendEntity> resultData = (List<FriendEntity>)dbCallback.Data;
+			if (resultData != null)
+			{
+				int level = 1;
+				foreach(FriendEntity friend in resultData)
+				{
+					level = friend.Level;
+					if (FriendLevels.ContainsKey(friend.Level) == false)
+						FriendLevels[friend.Level] = new List<FriendEntity>();
+					FriendLevels[friend.Level].Add(friend);
+				}
+
+				resultData.Clear();	
+
+				if(FriendLevels.Count > 0)
+				{
+					CreateFriendProgress(FriendLevels);
+				}
+			}
+			print(FriendLevels.Count);
+			testText.text = "FriendLevels.Count   "+FriendLevels.Count;
+		});
+
+
+	}
+
+	private void CreateFriendProgress(Dictionary<int, List<FriendEntity>> friendLevels)
+	{
+		if (friendLevels != null) {
+
+			var arrayOfAllLevels = friendLevels.Keys.ToArray();
+
+			for (int i = 0; i < arrayOfAllLevels.Length ; i++) {
+				GameObject go = (GameObject)Instantiate (FriendPrefab);
+				go.transform.position = listmap [arrayOfAllLevels [i]].transform.position + new Vector3(0, 0.6f, -0.2f);
+				listmap [arrayOfAllLevels [i]].GetComponent<Map>().FriendItem = go;
+
+				MapFriend mapFriend = go.GetComponent<MapFriend> ();
+				mapFriend.Init (friendLevels[i]);
+
+				_friendProgress.Add (go);
+			}
+		}
+	}
+
+
+	void ClearFriendProgress()
+	{
+		foreach (GameObject progress in _friendProgress) {
+			Destroy (progress);
+		}
 	}
 
 	protected void FriendsCallback(IResult result)

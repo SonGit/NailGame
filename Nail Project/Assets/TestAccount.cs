@@ -7,7 +7,7 @@ public class TestAccount : MonoBehaviour {
 	// Use this for initialization
 	public void OnClick_FB()
 	{
-		FacebookManager.Instance.RequestLoginFB ();
+		MainMenu.Instance.FacebookLogin ();
 	}
 
 	public void OnClick_Logout()

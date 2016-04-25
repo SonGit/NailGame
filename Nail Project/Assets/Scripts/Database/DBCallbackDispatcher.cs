@@ -35,6 +35,7 @@ namespace com.b2mi.dc.Database
 				singletonGameObject = new GameObject();
 				singleton = singletonGameObject.AddComponent< DBCallbackDispatcher >();
 				singletonGameObject.name = "DBCallbackDispatcher";
+				DontDestroyOnLoad(singletonGameObject);
 			}
 		}
 		
